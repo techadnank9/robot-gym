@@ -52,7 +52,8 @@ https://YOUR_POD_ID-8085.proxy.runpod.net
 
 Open it, click once inside the page, and use:
 
-- arrow keys — walk; the command remains active until Space;
+- connected gamepad — automatically preferred over keyboard;
+- arrow keys — walk while held;
 - Q/E — turn;
 - Space — stop;
 - G — easy grasp when within 1.25 m of the payload;
@@ -60,6 +61,22 @@ Open it, click once inside the page, and use:
 - R — release near the bucket;
 - U — recovery request;
 - X — request a payload reset.
+
+For joystick play, connect the controller to the computer running your browser,
+open the match URL, then press any controller button once so the browser exposes
+it. No controller is attached to the remote Pod. The browser reads it locally
+and sends validated 50 Hz teleoperation frames:
+
+- left stick — forward/back and lateral movement;
+- right stick — turn;
+- A / Cross — easy grasp;
+- X / Square — carry;
+- B / Circle — release;
+- Y / Triangle — recover;
+- Start / Options — payload reset.
+
+The first connected browser gamepad is selected automatically. Disconnecting it
+returns control to the keyboard.
 
 `play` needs no model key: Player 2 uses the local deterministic policy. For a
 solo practice arena with the other G1 standing idle:
@@ -103,6 +120,8 @@ the playable human-versus-scripted match automatically.
 - Page opens but says reconnecting: expose `8765` as an HTTP port too.
 - No movement: click the browser page, tap an arrow, and press Space before
   changing directions.
+- Gamepad not detected: use current Chrome, Edge, or Safari over the RunPod
+  HTTPS URL, reconnect the controller, and press one of its buttons once.
 - EGL initialization fails: use a RunPod NVIDIA/PyTorch Pod and rerun
   `bash scripts/setup_runpod.sh`.
 - First start takes several minutes: PyTorch, MuJoCo assets, textures, and the

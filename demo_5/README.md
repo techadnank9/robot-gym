@@ -79,6 +79,12 @@ headless rendering, wall-clock-paced physics, external interface binding, and
 automatic RunPod WebSocket proxy discovery. The first game uses a local
 scripted opponent and requires no API key.
 
+For a joystick connected to your laptop or desktop, press any controller button
+after opening the page. The browser automatically switches from keyboard to the
+Gamepad API: left stick moves, right stick turns, A/Cross grasps, X/Square
+carries, B/Circle releases, Y/Triangle recovers, and Start/Options requests a
+payload reset. The controller does not need USB passthrough to the Pod.
+
 Run `scripts/run_g1_demo_5_runpod.sh practice` for one human and an idle
 opponent, or export `DEMO3_P2_GEMINI_API_KEY` and run
 `scripts/run_g1_demo_5_runpod.sh gemini` for Gemini Robotics-ER.
@@ -126,7 +132,8 @@ display-color change does not alter the robot physics.
 
 The older `--p1-input keyboard` mode remains available for browser control.
 For that mode, open `http://127.0.0.1:8085/?wsPort=8765` and keep the browser
-focused. The simulator waits in its lobby until browser telemetry arrives.
+focused. A connected browser gamepad is automatically preferred over keyboard.
+The simulator waits in its lobby until browser telemetry arrives.
 
 The default `--render-profile performance` keeps scoreboard telemetry at 5 Hz
 while staggering lower-resolution broadcast and ego frames so camera rendering

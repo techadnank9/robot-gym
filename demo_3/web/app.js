@@ -26,6 +26,7 @@ const elements = {
   winner: document.querySelector("#winner"),
   keyboardHelp: document.querySelector("#keyboard-help"),
   keyboardPlayer: document.querySelector("#keyboard-player"),
+  inputHelp: document.querySelector("#input-help"),
 };
 
 let activeSocket = null;
@@ -33,10 +34,11 @@ let keyboardPlayer = null;
 let sequence = 0;
 let selectedSkill = "wait";
 let handClose = 0;
+let previousGamepadButtons = [];
 const heldKeys = new Set();
 const controlCodes = new Set([
   "KeyW", "KeyA", "KeyS", "KeyD", "KeyQ", "KeyE",
-  "KeyG", "KeyC", "KeyR", "KeyU",
+  "KeyG", "KeyC", "KeyR", "KeyU", "Space",
 ]);
 
 function formatTime(seconds) {
@@ -86,7 +88,7 @@ function update(message) {
   keyboardPlayer = browserPlayer || null;
   elements.keyboardHelp.hidden = !keyboardPlayer;
   if (keyboardPlayer) {
-    elements.keyboardPlayer.textContent = `${keyboardPlayer.toUpperCase()} KEYBOARD`;
+    updateInputHelp(connectedGamepad());
   }
   setFrame("broadcast-feed", message.frames.broadcast);
   setFrame("p1-feed", message.frames.p1);
@@ -120,11 +122,86 @@ function axis(positive, negative) {
   return (heldKeys.has(positive) ? 1 : 0) - (heldKeys.has(negative) ? 1 : 0);
 }
 
+function connectedGamepad() {
+  if (!navigator.getGamepads) return null;
+  return Array.from(navigator.getGamepads()).find((gamepad) =>
+    gamepad && gamepad.connected
+  ) || null;
+}
+
+function gamepadAxis(gamepad, index) {
+  const value = Number(gamepad.axes[index] || 0);
+  const deadzone = 0.14;
+  if (Math.abs(value) <= deadzone) return 0;
+  return Math.sign(value) *
+    Math.min(1, (Math.abs(value) - deadzone) / (1 - deadzone));
+}
+
+function readGamepad(gamepad) {
+  const buttons = gamepad.buttons.map((button) => Boolean(button.pressed));
+  const pressed = (index) =>
+    Boolean(buttons[index] && !previousGamepadButtons[index]);
+
+  if (pressed(0)) {
+    selectedSkill = "grasp";
+    handClose = 1;
+  } else if (pressed(2)) {
+    selectedSkill = "navigate_goal";
+    handClose = 1;
+  } else if (pressed(1)) {
+    selectedSkill = "release";
+    handClose = 0;
+  } else if (pressed(3)) {
+    selectedSkill = "recover";
+  }
+  if (pressed(9) && activeSocket?.readyState === WebSocket.OPEN) {
+    activeSocket.send(JSON.stringify({
+      type: "reset_payload",
+      player_id: keyboardPlayer,
+    }));
+  }
+  previousGamepadButtons = buttons;
+
+  return {
+    moveX: gamepadAxis(gamepad, 0),
+    moveY: -gamepadAxis(gamepad, 1),
+    yaw: gamepadAxis(gamepad, 2),
+  };
+}
+
+function updateInputHelp(gamepad) {
+  if (!keyboardPlayer) return;
+  if (gamepad) {
+    elements.keyboardPlayer.textContent = `${keyboardPlayer.toUpperCase()} GAMEPAD`;
+    if (elements.inputHelp) {
+      elements.inputHelp.textContent =
+        "LEFT STICK MOVE · RIGHT STICK TURN · A/✕ GRASP · X/□ CARRY · B/○ RELEASE · Y/△ RECOVER · START RESET";
+    }
+    return;
+  }
+  elements.keyboardPlayer.textContent = `${keyboardPlayer.toUpperCase()} KEYBOARD`;
+  if (elements.inputHelp) {
+    elements.inputHelp.textContent = demo5Host
+      ? "ARROWS MOVE · Q/E TURN · G EASY GRASP · C CARRY · R RELEASE · U RECOVER · X RESET"
+      : "WASD MOVE · Q/E TURN · G GRASP · C CARRY · R RELEASE · U RECOVER";
+  }
+}
+
 function sendTeleop() {
   if (!keyboardPlayer || !activeSocket || activeSocket.readyState !== WebSocket.OPEN) return;
-  const moveX = axis("KeyD", "KeyA");
-  const moveY = axis("KeyW", "KeyS");
-  const yaw = axis("KeyE", "KeyQ");
+  const gamepad = connectedGamepad();
+  let moveX;
+  let moveY;
+  let yaw;
+  if (gamepad) {
+    ({ moveX, moveY, yaw } = readGamepad(gamepad));
+  } else {
+    previousGamepadButtons = [];
+    moveX = axis("KeyD", "KeyA");
+    moveY = axis("KeyW", "KeyS");
+    yaw = axis("KeyE", "KeyQ");
+  }
+  updateInputHelp(gamepad);
   activeSocket.send(JSON.stringify({
     type: "teleop",
     frame: {
@@ -146,7 +223,11 @@ function sendTeleop() {
 window.addEventListener("keydown", (event) => {
   if (!controlCodes.has(event.code)) return;
   event.preventDefault();
-  heldKeys.add(event.code);
+  if (event.code === "Space") {
+    heldKeys.clear();
+  } else {
+    heldKeys.add(event.code);
+  }
   if (event.code === "KeyG") {
     selectedSkill = "grasp";
     handClose = 1;
@@ -171,6 +252,18 @@ window.addEventListener("keyup", (event) => {
 
 window.addEventListener("blur", () => {
   heldKeys.clear();
+  sendTeleop();
+});
+
+window.addEventListener("gamepadconnected", () => {
+  previousGamepadButtons = [];
+  updateInputHelp(connectedGamepad());
+  sendTeleop();
+});
+
+window.addEventListener("gamepaddisconnected", () => {
+  previousGamepadButtons = [];
+  updateInputHelp(null);
   sendTeleop();
 });
 

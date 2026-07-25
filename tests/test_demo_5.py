@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -37,6 +38,17 @@ def test_runpod_cli_enables_external_realtime_headless_mode():
     assert args.host == "0.0.0.0"
     assert args.http_port == 8085
     assert args.websocket_port == 8765
+
+
+def test_browser_match_client_includes_remote_gamepad_controls():
+    root = Path(__file__).resolve().parents[1]
+    app = (root / "demo_3" / "web" / "app.js").read_text(encoding="utf-8")
+
+    assert "navigator.getGamepads" in app
+    assert 'selectedSkill = "grasp"' in app
+    assert 'selectedSkill = "navigate_goal"' in app
+    assert 'selectedSkill = "release"' in app
+    assert 'type: "reset_payload"' in app
 
 
 def test_sdk_channel_clips_slews_delays_and_watchdogs():

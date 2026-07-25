@@ -72,7 +72,7 @@ and sends validated 50 Hz teleoperation frames:
 - right stick — turn;
 - A / Cross — easy grasp;
 - X / Square — carry;
-- B / Circle — release;
+- B / Circle — assisted release when within 0.90 m of the correct bucket;
 - Y / Triangle — recover;
 - Start / Options — payload reset.
 

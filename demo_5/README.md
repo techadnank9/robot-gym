@@ -151,6 +151,12 @@ Easy grasp gives the AI a small accessibility assist: policy players receive a
 human players retain the 1.25 m capture radius. Both use the same disclosed
 snap-to-hand attachment once grasp succeeds.
 
+Easy release is symmetric for humans and AI. Press B/Circle (or select
+`release`) within 0.90 m of the correct bucket and the payload is aligned just
+above the opening, collisions are restored, and MuJoCo gravity drops it into
+the bucket. A release farther away keeps the hand closed and tells the player
+to move closer.
+
 The older `--p1-input keyboard` mode remains available for browser control.
 For that mode, open `http://127.0.0.1:8085/?wsPort=8765` and keep the browser
 focused. A connected browser gamepad is automatically preferred over keyboard.

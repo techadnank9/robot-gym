@@ -140,6 +140,11 @@ def test_easy_grasp_discloses_and_locks_payload_to_hand():
             "human": 1.25,
             "policy": 1.45,
         }
+        assert state["simToReal"]["easyReleaseAssist"] == {
+            "captureRadiusM": 0.90,
+            "dropHeightM": 0.38,
+            "appliesTo": ["human", "policy"],
+        }
         arena.players["p1"].status.current_skill = Skill.GRASP
         arena._update_arm_targets()
         arena._apply_contact_grip()
@@ -154,8 +159,33 @@ def test_easy_grasp_discloses_and_locks_payload_to_hand():
         arena.players["p1"].status.current_skill = Skill.RELEASE
         arena.players["p1"].hand_close = 0.0
         arena._apply_contact_grip()
+        assert arena._easy_attached["p1"]
+
+        goal = np.asarray(arena.scene["players"]["p1"]["goal"], dtype=float)
+        base_joint = arena.model.joint("p1_floating_base_joint")
+        arena.data.qpos[base_joint.qposadr[0] : base_joint.qposadr[0] + 2] = (
+            goal[:2] + np.asarray([-0.75, 0.0])
+        )
+        arena.mujoco.mj_forward(arena.model, arena.data)
+        assert arena.policy_status("p1")["nearGoal"]
+        arena.players["p1"].hand_close = 0.0
+        arena._apply_contact_grip()
+
         assert not arena._easy_attached["p1"]
         assert arena.model.geom("p1_payload_geom").contype != 0
+        released = arena._payload_position("p1")
+        assert np.allclose(released[:2], goal[:2])
+        assert released[2] == pytest.approx(0.38)
+        assert arena.events[-1].payload["gravityDrop"] is True
+
+        for _ in range(350):
+            arena.mujoco.mj_step(arena.model, arena.data)
+        settled = arena._payload_position("p1")
+        assert settled[2] < released[2]
+        assert np.all(
+            np.abs(settled[:2] - goal[:2])
+            < np.asarray(arena.scene["scoring"]["goal_half_size"][:2])
+        )
     finally:
         arena.close()
 

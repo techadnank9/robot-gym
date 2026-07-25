@@ -38,6 +38,8 @@ from demo_5.perception import DelayedCameraPerception
 EASY_GRASP_RADIUS_HUMAN_M = 1.25
 EASY_GRASP_RADIUS_POLICY_M = 1.45
 POLICY_NEAR_OBJECT_RADIUS_M = 0.60
+EASY_RELEASE_RADIUS_M = 0.90
+EASY_RELEASE_DROP_HEIGHT_M = 0.38
 
 
 class SimToRealG1RaceArena(DualG1RaceArena):
@@ -229,6 +231,11 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 "human": EASY_GRASP_RADIUS_HUMAN_M,
                 "policy": EASY_GRASP_RADIUS_POLICY_M,
             },
+            "easyReleaseAssist": {
+                "captureRadiusM": EASY_RELEASE_RADIUS_M,
+                "dropHeightM": EASY_RELEASE_DROP_HEIGHT_M,
+                "appliesTo": ["human", "policy"],
+            },
             "graspAttachment": (
                 "kinematic_pose_lock" if self.grasp_mode == "easy" else "none"
             ),
@@ -262,6 +269,14 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         base = self._odom[player_id]
         payload = _position(observation.payload.position)
         goal = _position(observation.goal.position)
+        near_goal = (
+            self._easy_release_ready(player_id)
+            if self.grasp_mode == "easy"
+            else bool(
+                goal is not None
+                and np.linalg.norm(base[:2] - goal[:2]) < 0.58
+            )
+        )
         return {
             "fallen": runtime.status.fallen,
             "carrying": self._grasp_confirmed[player_id],
@@ -273,10 +288,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 and np.linalg.norm(base[:2] - payload[:2])
                 < POLICY_NEAR_OBJECT_RADIUS_M
             ),
-            "nearGoal": bool(
-                goal is not None
-                and np.linalg.norm(base[:2] - goal[:2]) < 0.58
-            ),
+            "nearGoal": near_goal,
             "objectVisible": observation.payload.position is not None,
             "objectConfidence": observation.payload.confidence,
             "goalSource": observation.goal.source,
@@ -530,15 +542,24 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                         )
                     runtime.hand_close = 1.0
             elif skill == Skill.RELEASE:
-                observation = self.perception.snapshot(player_id)
-                goal = _position(observation.goal.position)
-                near = bool(
-                    goal is not None
-                    and np.linalg.norm(self._odom[player_id][:2] - goal[:2]) < 0.58
-                )
+                if self.grasp_mode == "easy":
+                    near = self._easy_release_ready(player_id)
+                else:
+                    observation = self.perception.snapshot(player_id)
+                    goal = _position(observation.goal.position)
+                    near = bool(
+                        goal is not None
+                        and np.linalg.norm(self._odom[player_id][:2] - goal[:2]) < 0.58
+                    )
                 runtime.hand_close = 0.0 if near else 1.0
                 if near:
                     self._grasp_confirmed[player_id] = False
+                elif self.grasp_mode == "easy":
+                    distance = self._distance_to_goal(player_id)
+                    runtime.status.rationale = (
+                        f"Move within {EASY_RELEASE_RADIUS_M:.2f} m of the bucket "
+                        f"before releasing ({distance:.2f} m)."
+                    )
             elif runtime.config.mode.value == "human":
                 runtime.hand_close = runtime.frame.hand_close
             self._apply_arm(player_id, runtime.arm_targets)
@@ -613,12 +634,24 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             if (
                 runtime.status.current_skill == Skill.RELEASE
                 and runtime.hand_close < 0.25
+                and self._easy_release_ready(player_id)
             ):
+                self._position_payload_for_easy_release(player_id)
                 self._set_easy_attached(player_id, False)
                 self._grasp_confirmed[player_id] = False
                 runtime.had_payload_contact = False
-                runtime.status.rationale = "Easy grasp released the payload."
-                self._event("assisted_grasp_released", player_id=player_id)
+                runtime.status.rationale = (
+                    "Easy release aligned the payload above the bucket; gravity drop active."
+                )
+                self._event(
+                    "assisted_grasp_released",
+                    player_id=player_id,
+                    payload={
+                        "releaseRadiusM": EASY_RELEASE_RADIUS_M,
+                        "dropHeightM": EASY_RELEASE_DROP_HEIGHT_M,
+                        "gravityDrop": True,
+                    },
+                )
                 continue
             joint = self.model.joint(f"{player_id}_payload_joint")
             qpos_start = joint.qposadr[0]
@@ -631,6 +664,26 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             self.data.qvel[dof_start : dof_start + 6] = 0.0
             runtime.had_payload_contact = True
             self._grasp_confirmed[player_id] = True
+
+    def _distance_to_goal(self, player_id: str) -> float:
+        goal = np.asarray(self.scene["players"][player_id]["goal"], dtype=float)
+        return float(np.linalg.norm(self._base_position(player_id)[:2] - goal[:2]))
+
+    def _easy_release_ready(self, player_id: str) -> bool:
+        return self._distance_to_goal(player_id) <= EASY_RELEASE_RADIUS_M
+
+    def _position_payload_for_easy_release(self, player_id: str) -> None:
+        goal = np.asarray(self.scene["players"][player_id]["goal"], dtype=float)
+        joint = self.model.joint(f"{player_id}_payload_joint")
+        qpos_start = joint.qposadr[0]
+        dof_start = joint.dofadr[0]
+        self.data.qpos[qpos_start : qpos_start + 3] = [
+            goal[0],
+            goal[1],
+            EASY_RELEASE_DROP_HEIGHT_M,
+        ]
+        self.data.qpos[qpos_start + 3 : qpos_start + 7] = [1.0, 0.0, 0.0, 0.0]
+        self.data.qvel[dof_start : dof_start + 6] = 0.0
 
     def _set_easy_attached(self, player_id: str, attached: bool) -> None:
         self._easy_attached[player_id] = attached

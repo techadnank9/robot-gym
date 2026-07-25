@@ -71,13 +71,18 @@ On a RunPod PyTorch Pod, expose HTTP ports 8085 and 8765, then run:
 
 ```bash
 bash scripts/setup_runpod.sh
-scripts/run_g1_demo_5_runpod.sh play
+scripts/run_g1_demo_5_runpod.sh lobby
 ```
 
 Open `https://POD_ID-8085.proxy.runpod.net`. The RunPod launcher uses EGL
 headless rendering, wall-clock-paced physics, external interface binding, and
-automatic RunPod WebSocket proxy discovery. The first game uses a local
-scripted opponent and requires no API key.
+automatic RunPod WebSocket proxy discovery. Choose AI vs AI, AI vs Human, or
+Human vs Human on the landing page. Rematch replaces the completed child match
+without restarting the launcher.
+
+AI seats use Gemini Robotics-ER when the corresponding player key or shared
+`GEMINI_API_KEY` exists. Without a key they use the local scripted validation
+policy, so the landing page remains playable out of the box.
 
 For a joystick connected to your laptop or desktop, press any controller button
 after opening the page. The browser automatically switches from keyboard to the
@@ -89,16 +94,10 @@ Run `scripts/run_g1_demo_5_runpod.sh practice` for one human and an idle
 opponent, or export `DEMO3_P2_GEMINI_API_KEY` and run
 `scripts/run_g1_demo_5_runpod.sh gemini` for Gemini Robotics-ER.
 
-For two humans on separate computers, run:
-
-```bash
-scripts/run_g1_demo_5_runpod.sh human-vs-human
-```
-
-The launcher prints distinct URLs ending in `?player=p1` and `?player=p2`.
-Each player opens only their assigned URL and can use a keyboard or a joystick
-connected to their own browser device. The lobby waits for telemetry from both
-players for up to five minutes before starting.
+For Human vs Human, the landing page prepares distinct P1 and P2 links. Each
+player opens only their assigned link and can use a keyboard or a joystick
+connected to their own browser device. Both links show the same shared match;
+the lobby waits for telemetry from both players for up to five minutes.
 
 Validate the constrained stack:
 

@@ -20,7 +20,7 @@ fi
 export PYTHONPATH="$ROOT"
 export MUJOCO_GL="${MUJOCO_GL:-egl}"
 
-MODE="${1:-play}"
+MODE="${1:-lobby}"
 if [[ "$#" -gt 0 ]]; then
   shift
 fi
@@ -45,6 +45,17 @@ else
 fi
 
 case "$MODE" in
+  lobby)
+    exec "$PYTHON_BIN" -m demo_5.launcher \
+      --host "$HOST" \
+      --http-port "$HTTP_PORT" \
+      --match-host "$HOST" \
+      --match-http-port "${DEMO5_MATCH_HTTP_PORT:-8086}" \
+      --websocket-port "$WS_PORT" \
+      --grasp-mode "${DEMO5_GRASP_MODE:-easy}" \
+      --render-profile "${DEMO5_RENDER_PROFILE:-performance}" \
+      "$@"
+    ;;
   play)
     exec "$PYTHON_BIN" -m demo_5 \
       "${COMMON[@]}" \
@@ -93,7 +104,7 @@ case "$MODE" in
     exec "$PYTHON_BIN" -m demo_5 "${COMMON[@]}" "$@"
     ;;
   *)
-    echo "Usage: scripts/run_g1_demo_5_runpod.sh {play|practice|human-vs-human|hvh|gemini|ai-vs-ai|validate|match} [options]" >&2
+    echo "Usage: scripts/run_g1_demo_5_runpod.sh {lobby|play|practice|human-vs-human|hvh|gemini|ai-vs-ai|validate|match} [options]" >&2
     exit 2
     ;;
 esac

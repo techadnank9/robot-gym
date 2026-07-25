@@ -28,6 +28,7 @@ from demo_3.schemas import (
     PlayerStatus,
     Skill,
     TeleopFrame,
+    match_mode,
 )
 from demo_5.command_channel import ConstrainedLocomotion
 from demo_5.evidence import compare_hardware_reference
@@ -223,6 +224,9 @@ class SimToRealG1RaceArena(DualG1RaceArena):
     def state_payload(self) -> dict[str, Any]:
         payload = super().state_payload()
         payload["profileVersion"] = "5.0"
+        payload["matchMode"] = match_mode(
+            tuple(runtime.config for runtime in self.players.values())
+        ).value
         payload.pop("poses", None)
         payload["simToReal"] = {
             "privilegedControl": self.grasp_mode == "easy",

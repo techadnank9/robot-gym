@@ -37,7 +37,7 @@ cd /workspace
 git clone https://github.com/KaushikSiva/robot-gym.git
 cd robot-gym
 bash scripts/setup_runpod.sh
-scripts/run_g1_demo_5_runpod.sh play
+scripts/run_g1_demo_5_runpod.sh lobby
 ```
 
 The setup script creates an isolated environment, installs the Linux/EGL
@@ -50,7 +50,12 @@ The launcher prints the public URL. It has this form:
 https://YOUR_POD_ID-8085.proxy.runpod.net
 ```
 
-Open it, click once inside the page, and use:
+Open it and choose AI vs AI, AI vs Human, or Human vs Human. The launcher stays
+online between matches, starts the selected MuJoCo process, and exposes Rematch
+after a winner is verified. AI seats use Gemini when their key is configured
+and fall back to the deterministic validation policy when no key is present.
+
+For a human seat, click once inside the live arena and use:
 
 - connected gamepad — automatically preferred over keyboard;
 - arrow keys — walk while held;
@@ -83,24 +88,19 @@ For policy players, reaching that bucket radius while carrying a
 checkpoint-verified payload triggers the same assisted release as a grounded
 completion guardrail. It does not consume another model API call.
 
-`play` needs no model key: Player 2 uses the local deterministic policy. For a
-solo practice arena with the other G1 standing idle:
+The three direct launch modes remain available for testing. `play` needs no
+model key: Player 2 uses the local deterministic policy. For a solo practice
+arena with the other G1 standing idle:
 
 ```bash
 scripts/run_g1_demo_5_runpod.sh practice
 ```
 
-For two remote humans, start:
-
-```bash
-scripts/run_g1_demo_5_runpod.sh human-vs-human
-```
-
-The launcher prints separate P1 and P2 RunPod URLs. Send one URL to each
-player; the `?player=p1` or `?player=p2` parameter assigns that browser to its
-robot. Each player can use a locally connected joystick through the browser
-Gamepad API, with no controller USB passthrough to the Pod. The match waits in
-the lobby for up to five minutes until both seats are connected.
+For Human vs Human, the landing page displays separate P1 and P2 links after
+selection. Send P2 their link, then enter as P1. The query parameter assigns
+each browser to its robot while both remain in the same match. Each player can
+use a locally connected joystick through the browser Gamepad API, with no USB
+passthrough to the Pod. The match waits up to five minutes for both seats.
 
 For Gemini Robotics-ER as Player 2:
 

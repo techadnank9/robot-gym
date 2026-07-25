@@ -27,4 +27,4 @@ RUN bash scripts/download_g1_mjcf.sh \
 
 EXPOSE 8085 8765
 
-CMD ["bash", "scripts/run_g1_demo_5_runpod.sh", "play"]
+CMD ["bash", "scripts/run_g1_demo_5_runpod.sh", "lobby"]

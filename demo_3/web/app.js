@@ -108,7 +108,12 @@ function update(message) {
   if (state.winner) {
     elements.winner.textContent = state.result || `${state.winner.toUpperCase()} WON`;
     elements.result.classList.add("show");
+  } else {
+    elements.result.classList.remove("show");
   }
+  window.dispatchEvent(new CustomEvent("robotgym:match-state", {
+    detail: { state, frames: message.frames },
+  }));
 }
 
 function connect() {

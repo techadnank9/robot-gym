@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
+import threading
 from types import SimpleNamespace
 
 import numpy as np
@@ -63,6 +65,153 @@ def test_runpod_launcher_has_two_browser_human_mode():
     assert "human-vs-human|hvh)" in launcher
     assert "--p1 human --p1-input keyboard" in launcher
     assert "--p2 human --p2-input keyboard" in launcher
+
+
+def test_landing_page_exposes_all_match_modes_and_rematch():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "demo_5" / "web" / "index.html").read_text(encoding="utf-8")
+    lobby = (root / "demo_5" / "web" / "lobby.js").read_text(encoding="utf-8")
+    poster = root / "demo_5" / "web" / "arena-poster.jpg"
+
+    assert 'data-mode="ai-vs-ai"' in html
+    assert 'data-mode="human-vs-ai"' in html
+    assert 'data-mode="human-vs-human"' in html
+    assert 'id="rematch-button"' in html
+    assert 'fetch(path' in lobby
+    assert '"/api/matches"' in lobby
+    assert "startMatch(selectedMode, { rematch: true })" in lobby
+    assert poster.stat().st_size > 50_000
+
+
+def test_persistent_launcher_builds_all_three_safe_match_commands(
+    monkeypatch,
+    tmp_path,
+):
+    from demo_5.launcher import MatchLauncher
+
+    for name in (
+        "GEMINI_API_KEY",
+        "DEMO3_P1_GEMINI_API_KEY",
+        "DEMO3_P2_GEMINI_API_KEY",
+        "DEMO5_P1_ADAPTER",
+        "DEMO5_P2_ADAPTER",
+        "DEMO5_OPPONENT_ADAPTER",
+    ):
+        monkeypatch.delenv(name, raising=False)
+    launcher = MatchLauncher(
+        python_bin="/usr/bin/python3",
+        project_root=tmp_path,
+        match_host="0.0.0.0",
+        match_http_port=8086,
+        websocket_port=8765,
+        grasp_mode="easy",
+        render_profile="performance",
+    )
+
+    ai_command, adapters = launcher.command_for_mode("ai-vs-ai")
+    mixed_command, mixed_adapters = launcher.command_for_mode("human-vs-ai")
+    human_command, human_adapters = launcher.command_for_mode("human-vs-human")
+
+    assert adapters == {"p1": "scripted", "p2": "scripted"}
+    assert mixed_adapters == {"p2": "scripted"}
+    assert human_adapters == {}
+    assert ai_command[:3] == ["/usr/bin/python3", "-m", "demo_5"]
+    assert ai_command.count("policy") == 2
+    assert "scripted" in ai_command
+    assert "human" in mixed_command and "policy" in mixed_command
+    assert human_command.count("human") == 2
+    assert human_command.count("keyboard") == 2
+    assert "--websocket-port" in human_command
+    assert "8765" in human_command
+
+
+def test_persistent_launcher_uses_gemini_only_when_a_key_exists(
+    monkeypatch,
+    tmp_path,
+):
+    from demo_5.launcher import MatchLauncher
+
+    monkeypatch.setenv("GEMINI_API_KEY", "configured-secret")
+    monkeypatch.delenv("DEMO5_P1_ADAPTER", raising=False)
+    monkeypatch.delenv("DEMO5_P2_ADAPTER", raising=False)
+    monkeypatch.delenv("DEMO5_OPPONENT_ADAPTER", raising=False)
+    launcher = MatchLauncher(
+        python_bin="/usr/bin/python3",
+        project_root=tmp_path,
+        match_host="0.0.0.0",
+        match_http_port=8086,
+        websocket_port=8765,
+        grasp_mode="easy",
+        render_profile="performance",
+    )
+
+    _, adapters = launcher.command_for_mode("ai-vs-ai")
+
+    assert adapters == {"p1": "gemini-er", "p2": "gemini-er"}
+
+
+def test_persistent_launcher_replaces_finished_or_active_match(tmp_path):
+    from demo_5.launcher import MatchLauncher
+
+    class FakeProcess:
+        next_pid = 100
+
+        def __init__(self):
+            self.pid = FakeProcess.next_pid
+            FakeProcess.next_pid += 1
+            self.returncode = None
+            self.done = threading.Event()
+            self.terminated = False
+
+        def poll(self):
+            return self.returncode
+
+        def terminate(self):
+            self.terminated = True
+            self.returncode = -15
+            self.done.set()
+
+        def kill(self):
+            self.returncode = -9
+            self.done.set()
+
+        def wait(self, timeout=None):
+            if not self.done.wait(timeout):
+                raise subprocess.TimeoutExpired("fake", timeout)
+            return self.returncode
+
+    processes = []
+
+    def popen(command, **kwargs):
+        process = FakeProcess()
+        process.command = command
+        process.kwargs = kwargs
+        processes.append(process)
+        return process
+
+    launcher = MatchLauncher(
+        python_bin="/usr/bin/python3",
+        project_root=tmp_path,
+        match_host="0.0.0.0",
+        match_http_port=8086,
+        websocket_port=8765,
+        grasp_mode="easy",
+        render_profile="performance",
+        popen=popen,
+    )
+    first = launcher.start_match("human-vs-ai")
+    second = launcher.start_match("human-vs-human")
+
+    assert first["generation"] == 1
+    assert second["generation"] == 2
+    assert processes[0].terminated
+    assert processes[1].poll() is None
+    assert second["mode"] == "human-vs-human"
+    assert processes[1].kwargs["cwd"] == tmp_path
+    assert isinstance(processes[1].command, list)
+
+    launcher.close()
+    assert processes[1].terminated
 
 
 def test_demo5_allows_two_distinct_browser_control_seats():
@@ -233,6 +382,7 @@ def test_demo5_removes_privileged_public_poses_and_grasp_force():
     try:
         state = arena.state_payload()
         assert state["profileVersion"] == "5.0"
+        assert state["matchMode"] == "ai-vs-ai"
         assert "poses" not in state
         assert state["simToReal"]["privilegedControl"] is False
         assert state["simToReal"]["graspAssistForceN"] == 0.0

@@ -5,9 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>VLGE // G1 Sim-to-Real Arena</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="lobby.css" />
   </head>
   <body>
-    <main class="broadcast">
+    <section class="match-launcher" id="match-launcher" aria-labelledby="launcher-title">
+      <img class="launcher-image" src="arena-poster.jpg" alt="Two Unitree G1 robots facing a delivery arena" />
+      <div class="launcher-wash"></div>
+      <header class="launcher-header">
+        <div class="launcher-brand">
+          <strong>VLGE</strong>
+          <i></i>
+          <span>G1 DUEL LAB</span>
+        </div>
+        <div class="launcher-signal">
+          <i></i>
+          <span id="launcher-status">ARENA READY</span>
+        </div>
+      </header>
+
+      <div class="launcher-copy">
+        <p class="launcher-kicker">MUJOCO 1V1 // LIVE POLICY ARENA</p>
+        <h1 id="launcher-title">Choose your<br />opposition.</h1>
+        <p class="launcher-intro">
+          Race two G1s through one shared physical task. First verified delivery wins.
+        </p>
+
+        <div class="mode-list" id="mode-list" aria-label="Match modes">
+          <button class="mode-option" type="button" data-mode="ai-vs-ai">
+            <span>01</span>
+            <strong>AI vs AI</strong>
+            <small>Two configured model policies</small>
+            <i aria-hidden="true">↗</i>
+          </button>
+          <button class="mode-option" type="button" data-mode="human-vs-ai">
+            <span>02</span>
+            <strong>AI vs Human</strong>
+            <small>Pilot Vector against Nova</small>
+            <i aria-hidden="true">↗</i>
+          </button>
+          <button class="mode-option" type="button" data-mode="human-vs-human">
+            <span>03</span>
+            <strong>Human vs Human</strong>
+            <small>Two browsers, same live match</small>
+            <i aria-hidden="true">↗</i>
+          </button>
+        </div>
+
+        <div class="seat-panel" id="seat-panel" hidden>
+          <p>PLAYER LINKS READY</p>
+          <h2>Send P2 their link.<br />Then enter as P1.</h2>
+          <div class="seat-actions">
+            <button type="button" id="enter-p1">ENTER AS P1</button>
+            <button type="button" id="copy-p2">COPY P2 LINK</button>
+          </div>
+          <p class="copy-status" id="copy-status" aria-live="polite"></p>
+        </div>
+
+        <p class="launcher-error" id="launcher-error" role="alert"></p>
+      </div>
+
+      <footer class="launcher-footer">
+        <span>500 HZ PHYSICS</span>
+        <span>50 HZ CONTROL</span>
+        <span>CAMERA-GROUNDED</span>
+      </footer>
+    </section>
+
+    <main class="broadcast" id="match-broadcast" hidden>
       <header class="topbar">
         <div class="brand">
           <span class="brand-mark">VLGE</span>
@@ -61,6 +125,8 @@
         <div class="result" id="result" aria-live="polite">
           <span>DELIVERY VERIFIED</span>
           <strong id="winner">P1 WON</strong>
+          <button class="rematch-button" id="rematch-button" type="button">REMATCH</button>
+          <small class="rematch-note" id="rematch-note"></small>
         </div>
       </section>
 
@@ -86,5 +152,6 @@
     <script src="app.js"></script>
     <script src="arrows.js"></script>
     <script src="reset.js"></script>
+    <script src="lobby.js"></script>
   </body>
 </html>

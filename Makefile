@@ -10,10 +10,13 @@ ALLOW_RULE_PLANNER ?= 0
 
 export PYTHONPATH
 
-.PHONY: setup-brev runpod-setup runpod-play runpod-validate mac-setup mac-smoke mac-demo demo-3 demo-3-scripted demo-3-validate mac-osm-build mac-osm mac-golden-gate-build mac-golden-gate mac-salesforce-park-build mac-salesforce-park replit-worker replit-test check-gpu check-isaac check-livestream download-g1 download-g1-mjcf gemini-sort-demo build live-demo recorded-demo api vla dashboard eval test integration-test clean
+.PHONY: setup-brev runpod-setup runpod-lobby runpod-play runpod-validate mac-setup mac-smoke mac-demo demo-3 demo-3-scripted demo-3-validate mac-osm-build mac-osm mac-golden-gate-build mac-golden-gate mac-salesforce-park-build mac-salesforce-park replit-worker replit-test check-gpu check-isaac check-livestream download-g1 download-g1-mjcf gemini-sort-demo build live-demo recorded-demo api vla dashboard eval test integration-test clean
 
 runpod-setup:
 	bash scripts/setup_runpod.sh
+
+runpod-lobby:
+	bash scripts/run_g1_demo_5_runpod.sh lobby
 
 runpod-play:
 	bash scripts/run_g1_demo_5_runpod.sh play

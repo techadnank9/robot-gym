@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VLGE // G1 Sim-to-Real Arena</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="broadcast">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">VLGE</span>
+          <span class="brand-slash">//</span>
+          <span>G1 S2R ARENA</span>
+        </div>
+        <div class="match-meta">
+          <span id="match-id">LOCAL MATCH</span>
+          <span class="connection"><i id="connection-light"></i><b id="connection-label">CONNECTING</b></span>
+        </div>
+      </header>
+
+      <section class="arena">
+        <img id="broadcast-feed" alt="Live MuJoCo race arena" />
+        <div class="arena-shade"></div>
+        <div class="keyboard-help" id="keyboard-help" hidden>
+          <span id="keyboard-player">P1 KEYBOARD</span>
+          <b>ARROWS MOVE · Q/E TURN · G EASY GRASP · C CARRY · R RELEASE · U RECOVER · X REFEREE RESET</b>
+        </div>
+        <div class="scoreline">
+          <article class="player player-one">
+            <div class="identity">
+              <span class="player-index">01</span>
+              <div>
+                <h1 id="p1-name">PLAYER ONE</h1>
+                <p id="p1-model">Gemini Robotics-ER</p>
+              </div>
+            </div>
+            <div class="progress"><i id="p1-progress"></i></div>
+            <p class="rationale" id="p1-rationale">Waiting for the arena.</p>
+          </article>
+
+          <div class="clock">
+            <span id="phase">LOBBY</span>
+            <strong id="clock">00:00.000</strong>
+          </div>
+
+          <article class="player player-two">
+            <div class="identity">
+              <div>
+                <h1 id="p2-name">PLAYER TWO</h1>
+                <p id="p2-model">Gemini Robotics-ER</p>
+              </div>
+              <span class="player-index">02</span>
+            </div>
+            <div class="progress"><i id="p2-progress"></i></div>
+            <p class="rationale" id="p2-rationale">Waiting for the arena.</p>
+          </article>
+        </div>
+
+        <div class="result" id="result" aria-live="polite">
+          <span>DELIVERY VERIFIED</span>
+          <strong id="winner">P1 WON</strong>
+        </div>
+      </section>
+
+      <section class="telemetry">
+        <div class="camera-strip">
+          <figure>
+            <img id="p1-feed" alt="Player one robot camera" />
+            <figcaption><span>P1 OPTIC</span><b id="p1-skill">WAIT</b></figcaption>
+          </figure>
+          <figure>
+            <img id="p2-feed" alt="Player two robot camera" />
+            <figcaption><span>P2 OPTIC</span><b id="p2-skill">WAIT</b></figcaption>
+          </figure>
+        </div>
+        <div class="race-state">
+          <div><span>PHYSICS</span><b>500 HZ</b></div>
+          <div><span>SDK CHANNEL</span><b>50 HZ</b></div>
+          <div><span>P1</span><b id="p1-state">READY</b></div>
+          <div><span>P2</span><b id="p2-state">READY</b></div>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+    <script src="arrows.js"></script>
+    <script src="reset.js"></script>
+  </body>
+</html>

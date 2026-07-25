@@ -1,0 +1,4 @@
+vla:
+  request_timeout_s: 30
+  include_camera_images: false
+  endpoint_suffix: /infer

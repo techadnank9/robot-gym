@@ -1,0 +1,55 @@
+scene:
+  name: room
+  environment_usd_path_env: ISAAC_ROOM_ENV_USD_PATH
+  environment_prim_path: /World/Scene/Environment
+  bounds:
+    x: [-4.0, 4.0]
+    y: [-4.0, 4.0]
+    z_floor: 0.0
+  room:
+    wall_height: 2.5
+    wall_thickness: 0.1
+  robot_spawn: [0.0, 0.0, 0.82]
+  objects:
+    - name: red_bin
+      type: container
+      shape: cube
+      color: [1.0, 0.0, 0.0]
+      size: [0.5, 0.5, 0.6]
+      pose: [2.5, 1.5, 0.3]
+      avoidance_radius: 0.5
+    - name: chair
+      type: obstacle
+      shape: cube
+      color: [0.3, 0.3, 0.35]
+      size: [0.6, 0.6, 1.0]
+      pose: [1.0, 1.0, 0.5]
+      avoidance_radius: 0.7
+    - name: table
+      type: inspectable
+      shape: cube
+      color: [0.6, 0.4, 0.2]
+      size: [1.2, 0.8, 0.75]
+      pose: [-1.5, 1.8, 0.375]
+      avoidance_radius: 0.9
+    - name: bottle
+      type: pickup
+      shape: cylinder
+      color: [0.1, 0.6, 0.9]
+      size: [0.12, 0.12, 0.32]
+      pose: [-1.45, 1.8, 0.91]
+      avoidance_radius: 0.2
+    - name: home_marker
+      type: home
+      shape: cylinder
+      color: [0.0, 1.0, 0.0]
+      size: [0.4, 0.4, 0.02]
+      pose: [0.0, -2.8, 0.01]
+      avoidance_radius: 0.3
+  cameras:
+    - name: main_camera
+      pose: [3.4, -3.8, 2.5]
+      look_at: [0.2, 0.3, 1.0]
+    - name: top_down_camera
+      pose: [0.0, 0.0, 9.0]
+      look_at: [0.0, 0.0, 0.0]

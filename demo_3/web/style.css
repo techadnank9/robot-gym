@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@500;600;700;800&display=swap");
+
+:root {
+  color-scheme: dark;
+  --ink: #f3f4f6;
+  --muted: #989da8;
+  --surface: #090b0e;
+  --line: rgba(255, 255, 255, 0.13);
+  --p1: #ff402a;
+  --p2: #318cff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body { overflow-x: hidden; }
+
+.broadcast {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 58px minmax(430px, 1fr) 210px;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+    #090b0e;
+  background-size: 40px 40px;
+}
+
+.topbar {
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(9, 11, 14, .93);
+}
+
+.brand, .match-meta, .connection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 11px/1 IBM Plex Mono, monospace;
+  letter-spacing: .16em;
+}
+
+.brand-mark { font: 800 19px/1 Inter, sans-serif; letter-spacing: -.05em; }
+.brand-slash { color: var(--p1); }
+.match-meta { color: var(--muted); }
+.connection i { width: 6px; height: 6px; border-radius: 50%; background: #e6a62e; }
+.connection i.live { background: #6ee7a2; box-shadow: 0 0 12px #6ee7a2; }
+
+.arena { position: relative; min-height: 0; overflow: hidden; background: #11151b; }
+.arena > img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .35s ease; }
+.arena > img.ready { opacity: 1; }
+.arena-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.12), transparent 35%, rgba(0,0,0,.66)); pointer-events: none; }
+
+.keyboard-help {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  max-width: calc(100% - 32px);
+  padding: 10px 13px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(6,8,11,.78);
+  backdrop-filter: blur(8px);
+  font: 600 9px/1 IBM Plex Mono, monospace;
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+.keyboard-help[hidden] { display: none; }
+.keyboard-help span { color: #94eba9; }
+.keyboard-help b { overflow: hidden; text-overflow: ellipsis; }
+
+.scoreline {
+  position: absolute;
+  inset: auto 22px 22px;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr);
+  gap: 30px;
+  align-items: end;
+}
+
+.player { min-width: 0; }
+.player-two { text-align: right; }
+.identity { display: flex; align-items: center; gap: 14px; }
+.player-two .identity { justify-content: flex-end; }
+.identity h1 { margin: 0; font-size: clamp(19px, 2.2vw, 34px); letter-spacing: -.045em; }
+.identity p, .rationale { margin: 4px 0 0; color: rgba(255,255,255,.64); font: 500 10px/1.4 IBM Plex Mono, monospace; text-transform: uppercase; letter-spacing: .08em; }
+.player-index { font: 500 14px/1 IBM Plex Mono, monospace; color: var(--muted); }
+.progress { height: 3px; margin-top: 13px; background: rgba(255,255,255,.18); overflow: hidden; }
+.progress i { display: block; height: 100%; width: 0; transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.player-one .progress i { background: var(--p1); }
+.player-two .progress i { margin-left: auto; background: var(--p2); }
+.rationale { max-width: 520px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-two .rationale { margin-left: auto; }
+
+.clock { text-align: center; font-family: IBM Plex Mono, monospace; }
+.clock span { display: block; color: var(--muted); font-size: 9px; letter-spacing: .2em; }
+.clock strong { display: block; margin-top: 7px; font-size: clamp(20px, 3vw, 38px); font-weight: 500; letter-spacing: -.07em; }
+
+.result {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: rgba(5, 7, 9, .82);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+  transition: opacity .35s ease, transform .5s ease;
+}
+.result.show { opacity: 1; transform: scale(1); }
+.result span { font: 600 10px/1 IBM Plex Mono, monospace; letter-spacing: .28em; color: #94eba9; }
+.result strong { margin-top: 14px; font-size: clamp(40px, 8vw, 110px); letter-spacing: -.07em; }
+
+.telemetry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  min-height: 0;
+  border-top: 1px solid var(--line);
+}
+.camera-strip { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+figure { position: relative; margin: 0; overflow: hidden; border-right: 1px solid var(--line); background: #11151a; }
+figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+figcaption { position: absolute; inset: auto 12px 10px; display: flex; justify-content: space-between; font: 600 9px/1 IBM Plex Mono, monospace; letter-spacing: .13em; }
+figcaption span { color: rgba(255,255,255,.65); }
+
+.race-state { display: grid; grid-template-columns: 1fr 1fr; }
+.race-state div { padding: 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.race-state span, .race-state b { display: block; font: 500 9px/1 IBM Plex Mono, monospace; letter-spacing: .14em; }
+.race-state span { color: var(--muted); }
+.race-state b { margin-top: 9px; font-size: 12px; }
+
+@media (max-width: 760px) {
+  .broadcast { grid-template-rows: 52px minmax(460px, 1fr) 260px; }
+  .match-meta > span:first-child { display: none; }
+  .scoreline { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .clock { position: absolute; left: 50%; bottom: 98px; transform: translateX(-50%); }
+  .identity h1 { font-size: 18px; }
+  .rationale { display: none; }
+  .keyboard-help b { max-width: 48vw; }
+  .telemetry { grid-template-columns: 1fr; }
+  .race-state { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}

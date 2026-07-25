@@ -1,0 +1,31 @@
+scene:
+  name: unitree_g1_sf_salesforce_park
+  # Salesforce Transit Center, rooftop park, and Salesforce Tower.
+  bounds:
+    south: 37.78830
+    west: -122.39905
+    north: 37.79075
+    east: -122.39470
+
+  # Western rooftop garden. The platform is approximately the transit-center roof height.
+  robot_spawn:
+    latitude: 37.78905
+    longitude: -122.39785
+    heading_degrees: 100.0
+    base_height_m: 0.82
+    elevation_offset_m: 30.0
+
+  elevation:
+    provider: usgs
+    rows: 5
+    columns: 5
+
+  rendering:
+    default_building_height_m: 14.0
+    level_height_m: 3.1
+    road_thickness_m: 0.04
+    camera_height_m: 150.0
+    # OSM level 3 is the rooftop park deck; align it with the 30 m transit-center roof.
+    elevated_level_height_m: 10.0
+    surface_overrides_m:
+      "148288769": 30.0

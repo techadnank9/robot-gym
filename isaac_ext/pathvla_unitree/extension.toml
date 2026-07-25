@@ -1,0 +1,8 @@
+[package]
+version = "0.1.0"
+title = "PathVLA Unitree Isaac Live"
+description = "Strict Isaac Sim/Lab path simulation runner with VLA planning."
+category = "Simulation"
+
+[python]
+module = "isaac_ext.pathvla_unitree"

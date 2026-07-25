@@ -1,0 +1,26 @@
+scene:
+  name: unitree_g1_sf_embarcadero
+  # Ferry Building / Embarcadero crop. Keep API crops small and expand deliberately.
+  bounds:
+    south: 37.79435
+    west: -122.39610
+    north: 37.79635
+    east: -122.39285
+
+  # Geographic pose is converted to local ENU meters. Heading is clockwise from north.
+  robot_spawn:
+    latitude: 37.79530
+    longitude: -122.39445
+    heading_degrees: 25.0
+    base_height_m: 0.82
+
+  elevation:
+    provider: usgs
+    rows: 5
+    columns: 5
+
+  rendering:
+    default_building_height_m: 12.0
+    level_height_m: 3.1
+    road_thickness_m: 0.04
+    camera_height_m: 90.0

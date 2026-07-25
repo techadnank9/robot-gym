@@ -1,0 +1,1206 @@
+{
+  "input": "demo_5/assets/background/template_73_source.glb",
+  "objects": 100,
+  "vertices": 139188,
+  "triangles": 46396,
+  "bounds": {
+    "minimum": [
+      -7965.26708984375,
+      -3697.958251953125,
+      -2193.083984375
+    ],
+    "maximum": [
+      6365.259765625,
+      4097.96484375,
+      1835.548828125
+    ],
+    "size": [
+      14330.52685546875,
+      7795.923095703125,
+      4028.6328125
+    ]
+  },
+  "materials": [
+    "M_Brick_Interior_Wall",
+    "M_Brick_Interior_Wall_1",
+    "M_Glass",
+    "M_Interior_Radiator_1",
+    "M_Interior_Ventelation_Shaft",
+    "M_Interior_White_Plaster_Walls",
+    "M_Interior_White_Plaster_Walls_1",
+    "M_Interior_White_Plaster_Walls_1_material",
+    "M_Interior_White_Plaster_Walls_2",
+    "M_Interior_White_Plaster_Walls_3",
+    "M_Interior_White_Plastic",
+    "M_Interior_Windows_Doors_AlbedoTransparancy",
+    "M_Interior_Windows_Doors_AlbedoTransparancy_1",
+    "M_Interior_Windows_Doors_AlbedoTransparancy_2",
+    "M_Interior_Wodden_Floor",
+    "M_New_York_Pano",
+    "M_RedRoom_Interior_Glass_Plinth"
+  ],
+  "images": [
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_AirDuct_2K_Interior_AlbdeoTransparency.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_AirDuct_2K_Interior_normal.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Interior_Windows_Doors_AlbedoTransparancy.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_New_York_Pano_AlbdeoTransparency.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Old_Planks_Wood_Interior_AlbdeoTransparency.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Old_Planks_Wood_Interior_normal.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Radiator_Old_Complete_Radiator_Old_BaseCol.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Radiator_Old_Complete_Radiator_Old_Normal.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Raindrops_mask.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Raindrops_normal.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Wall_Brick_Interior_AlbdeoTransparency.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Wall_Brick_Interior_Normal.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Wall_Stucco_Interior_AlbdeoTransparency.png",
+    "/Users/kaushiksivakumar/workspace/robot-vla/pathvla-unitree-isaac-live/demo_5/assets/background/vlge_dependencies/T_Wall_Stucco_Interior_normal.png"
+  ],
+  "relinkedImages": {},
+  "meshObjects": [
+    {
+      "name": "Door__1_",
+      "vertices": 6,
+      "boundsSize": [
+        177.04776000976562,
+        0.10687255859375,
+        309.23486328125
+      ]
+    },
+    {
+      "name": "Box002",
+      "vertices": 648,
+      "boundsSize": [
+        48.64129638671875,
+        82.17559814453125,
+        424.3948059082031
+      ]
+    },
+    {
+      "name": "Box003",
+      "vertices": 324,
+      "boundsSize": [
+        1883.14306640625,
+        82.22235107421875,
+        52.06463623046875
+      ]
+    },
+    {
+      "name": "Box004",
+      "vertices": 648,
+      "boundsSize": [
+        72.98248291015625,
+        82.17559814453125,
+        424.39470195770264
+      ]
+    },
+    {
+      "name": "Box005",
+      "vertices": 648,
+      "boundsSize": [
+        67.43896484375,
+        82.17559814453125,
+        424.3947162628174
+      ]
+    },
+    {
+      "name": "Box006",
+      "vertices": 648,
+      "boundsSize": [
+        48.64131164550781,
+        82.17559814453125,
+        424.39471435546875
+      ]
+    },
+    {
+      "name": "Box007",
+      "vertices": 648,
+      "boundsSize": [
+        48.641326904296875,
+        82.17559814453125,
+        424.3948059082031
+      ]
+    },
+    {
+      "name": "Box008",
+      "vertices": 324,
+      "boundsSize": [
+        1749.48291015625,
+        70.1356201171875,
+        52.89406895637512
+      ]
+    },
+    {
+      "name": "Box017",
+      "vertices": 36,
+      "boundsSize": [
+        69.2740478515625,
+        1110.36328125,
+        63.624664306640625
+      ]
+    },
+    {
+      "name": "Box030",
+      "vertices": 36,
+      "boundsSize": [
+        69.27408599853516,
+        1110.3633422851562,
+        63.624664306640625
+      ]
+    },
+    {
+      "name": "Box054",
+      "vertices": 324,
+      "boundsSize": [
+        70.13519287109375,
+        1105.47607421875,
+        53.27421510219574
+      ]
+    },
+    {
+      "name": "Box055",
+      "vertices": 324,
+      "boundsSize": [
+        70.13519287109375,
+        1105.474365234375,
+        49.023040771484375
+      ]
+    },
+    {
+      "name": "Box056",
+      "vertices": 2016,
+      "boundsSize": [
+        1910.427490234375,
+        1695.2531127929688,
+        541.9591369628906
+      ]
+    },
+    {
+      "name": "Box057",
+      "vertices": 324,
+      "boundsSize": [
+        915.6995620727539,
+        82.22198486328125,
+        52.06427001953125
+      ]
+    },
+    {
+      "name": "Box058",
+      "vertices": 324,
+      "boundsSize": [
+        70.13519287109375,
+        1105.4743041992188,
+        49.02301025390625
+      ]
+    },
+    {
+      "name": "Box059",
+      "vertices": 648,
+      "boundsSize": [
+        48.641326904296875,
+        82.17559814453125,
+        425.98858642578125
+      ]
+    },
+    {
+      "name": "Box060",
+      "vertices": 648,
+      "boundsSize": [
+        82.175537109375,
+        105.62484741210938,
+        424.3946838378906
+      ]
+    },
+    {
+      "name": "Box061",
+      "vertices": 648,
+      "boundsSize": [
+        82.175537109375,
+        48.641326904296875,
+        428.016357421875
+      ]
+    },
+    {
+      "name": "Box063",
+      "vertices": 648,
+      "boundsSize": [
+        48.64131164550781,
+        82.17559814453125,
+        424.3948059082031
+      ]
+    },
+    {
+      "name": "Box064",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        368.8283042907715
+      ]
+    },
+    {
+      "name": "Box065",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        368.8283042907715
+      ]
+    },
+    {
+      "name": "Box066",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        368.8283042907715
+      ]
+    },
+    {
+      "name": "Box067",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        368.8283042907715
+      ]
+    },
+    {
+      "name": "Box068",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        426.6389465332031
+      ]
+    },
+    {
+      "name": "Box069",
+      "vertices": 648,
+      "boundsSize": [
+        19.86322021484375,
+        45.44451904296875,
+        429.52191162109375
+      ]
+    },
+    {
+      "name": "Box070",
+      "vertices": 648,
+      "boundsSize": [
+        45.444580078125,
+        19.863235473632812,
+        431.0804138183594
+      ]
+    },
+    {
+      "name": "Box071",
+      "vertices": 648,
+      "boundsSize": [
+        82.175537109375,
+        48.64131736755371,
+        428.016357421875
+      ]
+    },
+    {
+      "name": "Box072",
+      "vertices": 648,
+      "boundsSize": [
+        45.44451904296875,
+        19.863235473632812,
+        422.4422302246094
+      ]
+    },
+    {
+      "name": "Box073",
+      "vertices": 648,
+      "boundsSize": [
+        48.64129638671875,
+        82.17559814453125,
+        424.3948059082031
+      ]
+    },
+    {
+      "name": "Box074",
+      "vertices": 648,
+      "boundsSize": [
+        82.175537109375,
+        48.641326904296875,
+        424.3947123885155
+      ]
+    },
+    {
+      "name": "Box075",
+      "vertices": 648,
+      "boundsSize": [
+        45.444580078125,
+        20.42431640625,
+        415.93348157405853
+      ]
+    },
+    {
+      "name": "Box076",
+      "vertices": 648,
+      "boundsSize": [
+        82.175537109375,
+        48.64131736755371,
+        424.3946971297264
+      ]
+    },
+    {
+      "name": "Complete001",
+      "vertices": 22602,
+      "boundsSize": [
+        90.92724609375,
+        7.565673828125,
+        61.10172080993652
+      ]
+    },
+    {
+      "name": "Complete003",
+      "vertices": 22602,
+      "boundsSize": [
+        7.56573486328125,
+        90.92724609375,
+        61.101749897003174
+      ]
+    },
+    {
+      "name": "Complete004",
+      "vertices": 22602,
+      "boundsSize": [
+        7.56561279296875,
+        90.92727661132812,
+        61.10177135467529
+      ]
+    },
+    {
+      "name": "Complete005",
+      "vertices": 22602,
+      "boundsSize": [
+        7.565673828125,
+        90.92726135253906,
+        61.101749897003174
+      ]
+    },
+    {
+      "name": "Complete",
+      "vertices": 22602,
+      "boundsSize": [
+        90.92724609375,
+        7.565673828125,
+        61.10172080993652
+      ]
+    },
+    {
+      "name": "Cylinder018",
+      "vertices": 432,
+      "boundsSize": [
+        117.4124755859375,
+        117.41244506835938,
+        996.6533131599426
+      ]
+    },
+    {
+      "name": "Object002",
+      "vertices": 24,
+      "boundsSize": [
+        1941.744140625,
+        1396.9677734375,
+        9.428499102592468
+      ]
+    },
+    {
+      "name": "Line001",
+      "vertices": 96,
+      "boundsSize": [
+        197.88388061523438,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line002",
+      "vertices": 96,
+      "boundsSize": [
+        197.8838653564453,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line003",
+      "vertices": 96,
+      "boundsSize": [
+        197.89875030517578,
+        9.899658203125,
+        141.4233627319336
+      ]
+    },
+    {
+      "name": "Line004",
+      "vertices": 96,
+      "boundsSize": [
+        197.89875030517578,
+        9.899658203125,
+        141.42335510253906
+      ]
+    },
+    {
+      "name": "Line005",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line006",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line007",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.4233627319336
+      ]
+    },
+    {
+      "name": "Line008",
+      "vertices": 96,
+      "boundsSize": [
+        197.89873504638672,
+        9.899658203125,
+        141.42335510253906
+      ]
+    },
+    {
+      "name": "Line009",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line010",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line011",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.4233627319336
+      ]
+    },
+    {
+      "name": "Line012",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.4233627319336
+      ]
+    },
+    {
+      "name": "Line013",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line014",
+      "vertices": 96,
+      "boundsSize": [
+        197.88388061523438,
+        9.89959716796875,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line015",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.4233627319336
+      ]
+    },
+    {
+      "name": "Line016",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.42335510253906
+      ]
+    },
+    {
+      "name": "Line017",
+      "vertices": 96,
+      "boundsSize": [
+        197.88385009765625,
+        9.89959716796875,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line018",
+      "vertices": 96,
+      "boundsSize": [
+        197.88388061523438,
+        9.89959716796875,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line019",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.42333984375
+      ]
+    },
+    {
+      "name": "Line020",
+      "vertices": 96,
+      "boundsSize": [
+        197.89874267578125,
+        9.899658203125,
+        141.42333984375
+      ]
+    },
+    {
+      "name": "Line021",
+      "vertices": 96,
+      "boundsSize": [
+        197.88387298583984,
+        9.89959716796875,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line022",
+      "vertices": 96,
+      "boundsSize": [
+        197.8838653564453,
+        9.89959716796875,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line023",
+      "vertices": 96,
+      "boundsSize": [
+        197.89875030517578,
+        9.899658203125,
+        141.42333984375
+      ]
+    },
+    {
+      "name": "Line024",
+      "vertices": 96,
+      "boundsSize": [
+        197.89873504638672,
+        9.899658203125,
+        141.42333984375
+      ]
+    },
+    {
+      "name": "Line025",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.88390731811523,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line026",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.8839111328125,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line027",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.8988037109375,
+        141.42340087890625
+      ]
+    },
+    {
+      "name": "Line028",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.8987922668457,
+        141.42340087890625
+      ]
+    },
+    {
+      "name": "Line029",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.8839111328125,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line030",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.88391137123108,
+        233.9647216796875
+      ]
+    },
+    {
+      "name": "Line031",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.89880108833313,
+        141.42340087890625
+      ]
+    },
+    {
+      "name": "Line032",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        197.89878845214844,
+        141.42340087890625
+      ]
+    },
+    {
+      "name": "Line033",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        203.47394943237305,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line034",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        203.47396850585938,
+        233.96473693847656
+      ]
+    },
+    {
+      "name": "Line035",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        203.48927307128906,
+        141.42335510253906
+      ]
+    },
+    {
+      "name": "Line036",
+      "vertices": 96,
+      "boundsSize": [
+        9.89959716796875,
+        203.48926162719727,
+        141.42335510253906
+      ]
+    },
+    {
+      "name": "Object003",
+      "vertices": 36,
+      "boundsSize": [
+        0.95361328125,
+        1098.53857421875,
+        472.6951277256012
+      ]
+    },
+    {
+      "name": "Object033",
+      "vertices": 228,
+      "boundsSize": [
+        223.334228515625,
+        27.0733642578125,
+        333.98800241947174
+      ]
+    },
+    {
+      "name": "Object034",
+      "vertices": 36,
+      "boundsSize": [
+        177.0477294921875,
+        2.4652099609375,
+        309.2348258495331
+      ]
+    },
+    {
+      "name": "Plane004",
+      "vertices": 144,
+      "boundsSize": [
+        390.67835998535156,
+        3.000244140625,
+        359.8248481750488
+      ]
+    },
+    {
+      "name": "Plane005",
+      "vertices": 144,
+      "boundsSize": [
+        390.6783447265625,
+        3.000244140625,
+        359.8248481750488
+      ]
+    },
+    {
+      "name": "Plane006",
+      "vertices": 144,
+      "boundsSize": [
+        390.67840576171875,
+        3.000244140625,
+        359.8248481750488
+      ]
+    },
+    {
+      "name": "Plane007",
+      "vertices": 144,
+      "boundsSize": [
+        390.6783752441406,
+        3.000244140625,
+        359.8248481750488
+      ]
+    },
+    {
+      "name": "Plane008",
+      "vertices": 144,
+      "boundsSize": [
+        390.6783752441406,
+        3.000244140625,
+        359.8248291015625
+      ]
+    },
+    {
+      "name": "Plane009",
+      "vertices": 144,
+      "boundsSize": [
+        390.67835998535156,
+        3.000244140625,
+        359.8248291015625
+      ]
+    },
+    {
+      "name": "Plane010",
+      "vertices": 144,
+      "boundsSize": [
+        3.000244140625,
+        390.6784553527832,
+        359.8248291015625
+      ]
+    },
+    {
+      "name": "Plane011",
+      "vertices": 144,
+      "boundsSize": [
+        3.000244140625,
+        390.67845344543457,
+        359.8248291015625
+      ]
+    },
+    {
+      "name": "Plane012",
+      "vertices": 144,
+      "boundsSize": [
+        3.00030517578125,
+        401.71477127075195,
+        359.82484436035156
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone_",
+      "vertices": 216,
+      "boundsSize": [
+        47.466814041137695,
+        45.35186576843262,
+        107.21696448326111
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__001",
+      "vertices": 216,
+      "boundsSize": [
+        47.466814041137695,
+        45.35186576843262,
+        107.21697163581848
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__002",
+      "vertices": 216,
+      "boundsSize": [
+        47.466796875,
+        45.35185241699219,
+        83.12530398368835
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__003",
+      "vertices": 216,
+      "boundsSize": [
+        47.466796875,
+        45.35185241699219,
+        83.1253035068512
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__004",
+      "vertices": 216,
+      "boundsSize": [
+        47.466827392578125,
+        45.35186767578125,
+        159.98911905288696
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__005",
+      "vertices": 216,
+      "boundsSize": [
+        47.466827392578125,
+        45.35186767578125,
+        159.98910474777222
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__006",
+      "vertices": 216,
+      "boundsSize": [
+        69.28256225585938,
+        66.195556640625,
+        121.3297233581543
+      ]
+    },
+    {
+      "name": "SM_RedRoom_Interior_Glass_Plinthm_Clone__007",
+      "vertices": 216,
+      "boundsSize": [
+        69.28253173828125,
+        66.195556640625,
+        121.32972383499146
+      ]
+    },
+    {
+      "name": "SM_New_York_Pano",
+      "vertices": 36,
+      "boundsSize": [
+        14330.52685546875,
+        7795.923095703125,
+        2586.1678466796875
+      ]
+    },
+    {
+      "name": "Object001",
+      "vertices": 396,
+      "boundsSize": [
+        1881.869140625,
+        692.6270751953125,
+        473.88791167736053
+      ]
+    },
+    {
+      "name": "Object033_1",
+      "vertices": 144,
+      "boundsSize": [
+        223.33425903320312,
+        29.65362548828125,
+        333.0451096072793
+      ]
+    },
+    {
+      "name": "Object034_1",
+      "vertices": 36,
+      "boundsSize": [
+        177.04782104492188,
+        2.572021484375,
+        309.2357174754143
+      ]
+    },
+    {
+      "name": "backwall",
+      "vertices": 36,
+      "boundsSize": [
+        0.95355224609375,
+        365.3512878417969,
+        429.15032732486725
+      ]
+    }
+  ],
+  "sourceSha256": "66feb9158d7e1ebe996f222750ea6a44e0aaa68eea09a59490b4fd83b01fe021",
+  "normalization": {
+    "scale": 0.008664154096818363,
+    "roomCenterSource": [
+      96.24755859375,
+      -99.61468505859375
+    ],
+    "floorZSource": -1.1698132753372192,
+    "convertedBounds": {
+      "minimum": [
+        -67.37652587890625,
+        -31.176660537719727,
+        -19.01607322692871
+      ],
+      "maximum": [
+        54.31570816040039,
+        33.9739990234375,
+        15.888614654541016
+      ]
+    }
+  },
+  "parts": [
+    {
+      "mesh": "00_m_brick_interior_wall_1.obj",
+      "material": "M_Brick_Interior_Wall_1",
+      "rgba": [
+        0.297,
+        0.297,
+        0.297,
+        1.0
+      ],
+      "triangles": 12,
+      "texture": "textures/t_wall_brick_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "01_m_interior_windows_doors_albedotransparancy.obj",
+      "material": "M_Interior_Windows_Doors_AlbedoTransparancy",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 2,
+      "texture": "textures/t_interior_windows_doors_albedotransparancy_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "02_m_interior_white_plaster_walls_2.obj",
+      "material": "M_Interior_White_Plaster_Walls_2",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 2520,
+      "texture": "textures/t_wall_stucco_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "03_m_interior_white_plaster_walls_1.obj",
+      "material": "M_Interior_White_Plaster_Walls_1",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 432,
+      "texture": "textures/t_wall_stucco_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "04_m_interior_white_plaster_walls.obj",
+      "material": "M_Interior_White_Plaster_Walls",
+      "rgba": [
+        0.8,
+        0.8,
+        0.8,
+        1.0
+      ],
+      "triangles": 2236,
+      "texture": null,
+      "enabled": true
+    },
+    {
+      "mesh": "05_m_interior_ventelation_shaft.obj",
+      "material": "M_Interior_Ventelation_Shaft",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 24,
+      "texture": "textures/t_airduct_2k_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "06_m_interior_white_plaster_walls_3.obj",
+      "material": "M_Interior_White_Plaster_Walls_3",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 804,
+      "texture": "textures/t_wall_stucco_interior_albdeotransparency_png.png",
+      "enabled": false
+    },
+    {
+      "mesh": "07_m_interior_white_plaster_walls_1_material.obj",
+      "material": "M_Interior_White_Plaster_Walls_1_material",
+      "rgba": [
+        0.8,
+        0.8,
+        0.8,
+        1.0
+      ],
+      "triangles": 480,
+      "texture": "textures/t_wall_stucco_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "08_m_interior_radiator_1.obj",
+      "material": "M_Interior_Radiator_1",
+      "rgba": [
+        0.255,
+        0.255,
+        0.255,
+        1.0
+      ],
+      "triangles": 37670,
+      "texture": "textures/t_radiator_old_complete_radiator_old_basecol_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "09_m_interior_wodden_floor.obj",
+      "material": "M_Interior_Wodden_Floor",
+      "rgba": [
+        0.735849,
+        0.735849,
+        0.735849,
+        1.0
+      ],
+      "triangles": 8,
+      "texture": "textures/t_old_planks_wood_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "10_m_interior_white_plastic.obj",
+      "material": "M_Interior_White_Plastic",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 1152,
+      "texture": null,
+      "enabled": true
+    },
+    {
+      "mesh": "11_m_brick_interior_wall.obj",
+      "material": "M_Brick_Interior_Wall",
+      "rgba": [
+        0.716981,
+        0.716981,
+        0.716981,
+        1.0
+      ],
+      "triangles": 12,
+      "texture": "textures/t_wall_brick_interior_albdeotransparency_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "12_m_interior_windows_doors_albedotransparancy_1.obj",
+      "material": "M_Interior_Windows_Doors_AlbedoTransparancy_1",
+      "rgba": [
+        0.8,
+        0.8,
+        0.8,
+        1.0
+      ],
+      "triangles": 12,
+      "texture": null,
+      "enabled": true
+    },
+    {
+      "mesh": "13_m_glass.obj",
+      "material": "M_Glass",
+      "rgba": [
+        0.622642,
+        0.622642,
+        0.622642,
+        1.0
+      ],
+      "triangles": 432,
+      "texture": "textures/t_raindrops_mask_png.png",
+      "enabled": true
+    },
+    {
+      "mesh": "14_m_redroom_interior_glass_plinth.obj",
+      "material": "M_RedRoom_Interior_Glass_Plinth",
+      "rgba": [
+        0.685535,
+        1.0,
+        0.996828,
+        1.0
+      ],
+      "triangles": 576,
+      "texture": null,
+      "enabled": true
+    },
+    {
+      "mesh": "15_m_new_york_pano.obj",
+      "material": "M_New_York_Pano",
+      "rgba": [
+        0.188679,
+        0.188679,
+        0.188679,
+        1.0
+      ],
+      "triangles": 12,
+      "texture": "textures/t_new_york_pano_albdeotransparency_png.png",
+      "enabled": false
+    },
+    {
+      "mesh": "16_m_interior_windows_doors_albedotransparancy_2.obj",
+      "material": "M_Interior_Windows_Doors_AlbedoTransparancy_2",
+      "rgba": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 12,
+      "texture": null,
+      "enabled": true
+    }
+  ],
+  "missingExternalTextures": []
+}

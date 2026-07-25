@@ -1,0 +1,11 @@
+robot:
+  name: unitree_g1
+  usd_path_env: UNITREE_G1_USD_PATH
+  default_prim_path: /World/Robot/unitree_g1
+  proxy_prim_path: /World/Robot/G1_PROXY
+  spawn_translation: [0.0, 0.0, 0.0]
+  spawn_orientation_xyzw: [0.0, 0.0, 0.0, 1.0]
+  locomotion:
+    controller_module:
+    controller_class:
+    controller_kwargs: {}

@@ -1,0 +1,41 @@
+scene:
+  name: unitree_g1_sf_golden_gate_bridge
+  bounds:
+    south: 37.80500
+    west: -122.48700
+    north: 37.83450
+    east: -122.46900
+
+  # East sidewalk near the south tower, facing toward Marin.
+  robot_spawn:
+    latitude: 37.81411
+    longitude: -122.47779
+    heading_degrees: 353.5
+    base_height_m: 0.82
+    surface_elevation_m: 67.0
+
+  elevation:
+    provider: usgs
+    rows: 5
+    columns: 5
+
+  rendering:
+    default_building_height_m: 10.0
+    level_height_m: 3.1
+    road_thickness_m: 0.04
+    camera_height_m: 330.0
+    elevated_level_height_m: 4.0
+
+  landmark:
+    type: golden_gate_bridge
+    south_anchor: {latitude: 37.80963, longitude: -122.47738}
+    south_tower: {latitude: 37.81395, longitude: -122.47772}
+    north_tower: {latitude: 37.82543, longitude: -122.47906}
+    north_anchor: {latitude: 37.82885, longitude: -122.47962}
+    deck_elevation_m: 67.0
+    deck_width_m: 27.0
+    tower_top_elevation_m: 227.0
+    main_cable_mid_elevation_m: 82.0
+    anchor_cable_elevation_m: 92.0
+    main_cable_radius_m: 0.46
+    water_elevation_m: 0.0

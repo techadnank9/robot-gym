@@ -1,0 +1,11 @@
+mujoco>=3.3,<4
+google-genai>=1.0
+pydantic>=2.7,<3
+PyYAML>=6.0
+numpy>=1.26,<3
+imageio>=2.34
+imageio-ffmpeg>=0.5
+Pillow>=10.0
+websockets>=14,<17
+pygame>=2.6,<3
+pytest>=8.2

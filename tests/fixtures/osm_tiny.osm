@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="PathVLA test fixture">
+  <bounds minlat="37.7949" minlon="-122.3951" maxlat="37.7951" maxlon="-122.3947"/>
+  <node id="1" lat="37.79494" lon="-122.39505"/>
+  <node id="2" lat="37.79494" lon="-122.39495"/>
+  <node id="3" lat="37.79502" lon="-122.39495"/>
+  <node id="4" lat="37.79502" lon="-122.39505"/>
+  <node id="5" lat="37.79491" lon="-122.39508"/>
+  <node id="6" lat="37.79508" lon="-122.39472"/>
+  <node id="7" lat="37.79491" lon="-122.39478"/>
+  <node id="8" lat="37.79508" lon="-122.39478"/>
+  <node id="9" lat="37.79503" lon="-122.39490"/>
+  <node id="10" lat="37.79503" lon="-122.39482"/>
+  <node id="11" lat="37.79509" lon="-122.39482"/>
+  <node id="12" lat="37.79509" lon="-122.39490"/>
+  <node id="13" lat="37.79503" lon="-122.39476"/>
+  <node id="14" lat="37.79503" lon="-122.39470"/>
+  <node id="15" lat="37.79509" lon="-122.39470"/>
+  <node id="16" lat="37.79509" lon="-122.39476"/>
+  <way id="100">
+    <nd ref="1"/><nd ref="2"/><nd ref="3"/><nd ref="4"/><nd ref="1"/>
+    <tag k="building" v="yes"/>
+    <tag k="building:levels" v="3"/>
+    <tag k="building:colour" v="#C0392B"/>
+  </way>
+  <way id="200">
+    <nd ref="5"/><nd ref="6"/>
+    <tag k="highway" v="residential"/>
+    <tag k="lanes" v="2"/>
+  </way>
+  <way id="300">
+    <nd ref="7"/><nd ref="8"/>
+    <tag k="highway" v="footway"/>
+    <tag k="width" v="2.4"/>
+  </way>
+  <way id="400">
+    <nd ref="9"/><nd ref="10"/><nd ref="11"/>
+  </way>
+  <way id="401">
+    <nd ref="11"/><nd ref="12"/><nd ref="9"/>
+  </way>
+  <way id="600">
+    <nd ref="13"/><nd ref="14"/><nd ref="15"/><nd ref="16"/><nd ref="13"/>
+    <tag k="leisure" v="park"/>
+    <tag k="level" v="3"/>
+  </way>
+  <relation id="500">
+    <member type="way" ref="400" role="outer"/>
+    <member type="way" ref="401" role="outer"/>
+    <tag k="type" v="multipolygon"/>
+    <tag k="building" v="yes"/>
+    <tag k="height" v="18 m"/>
+  </relation>
+</osm>

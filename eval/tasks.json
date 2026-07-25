@@ -1,0 +1,34 @@
+[
+  {
+    "scene": "room",
+    "instruction": "Go to the red bin."
+  },
+  {
+    "scene": "room",
+    "instruction": "Avoid the chair and go to the red bin."
+  },
+  {
+    "scene": "room",
+    "instruction": "Inspect the table then return home."
+  },
+  {
+    "scene": "room",
+    "instruction": "Pick up the bottle and bring it to the red bin."
+  },
+  {
+    "scene": "room",
+    "instruction": "Go to the red bin while avoiding chair and table."
+  },
+  {
+    "scene": "room",
+    "instruction": "Find the safest path to the table."
+  },
+  {
+    "scene": "room",
+    "instruction": "Go home after inspecting the bottle."
+  },
+  {
+    "scene": "warehouse",
+    "instruction": "Navigate warehouse scene to the red bin while avoiding shelves."
+  }
+]

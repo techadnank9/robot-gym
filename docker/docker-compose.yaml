@@ -1,0 +1,75 @@
+services:
+  pathvla-isaac:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        ISAAC_BASE_IMAGE: ${ISAAC_BASE_IMAGE:?Set ISAAC_BASE_IMAGE to a real Isaac Sim/Lab image}
+    image: pathvla-unitree-isaac-live:latest
+    container_name: pathvla-isaac
+    user: "0:0"
+    environment:
+      ACCEPT_EULA: "Y"
+      PRIVACY_CONSENT: "Y"
+      VLA_ENDPOINT: ${VLA_ENDPOINT:-http://vla-server:5555/infer}
+      VLA_API_KEY: ${VLA_API_KEY:-}
+      VLA_MODEL_NAME: ${VLA_MODEL_NAME:-}
+      UNITREE_G1_USD_PATH: ${UNITREE_G1_USD_PATH:-}
+      BREV_PUBLIC_HOST: ${BREV_PUBLIC_HOST:-}
+      LIVESTREAM_PORTS: ${LIVESTREAM_PORTS:-8211,8899,49100-49200}
+      PATHVLA_API_HOST: ${PATHVLA_API_HOST:-0.0.0.0}
+      PATHVLA_API_PORT: ${PATHVLA_API_PORT:-8000}
+      PATHVLA_DASHBOARD_PORT: ${PATHVLA_DASHBOARD_PORT:-8501}
+      PATHVLA_OUTPUT_ROOT: ${PATHVLA_OUTPUT_ROOT:-outputs}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_ROBOTICS_MODEL: ${GEMINI_ROBOTICS_MODEL:-gemini-robotics-er-1.6-preview}
+      ISAAC_SORTING_LAB_USD_PATH: ${ISAAC_SORTING_LAB_USD_PATH:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    working_dir: /workspace/pathvla-unitree-isaac-live
+    volumes:
+      - ..:/workspace/pathvla-unitree-isaac-live
+      - ../outputs:/workspace/pathvla-unitree-isaac-live/outputs
+      - ${HOST_WORKSPACE_ROOT:-/tmp}:/host_workspace
+      - ${HOME}/.cache/ov:/root/.cache/ov
+      - ${HOME}/.nvidia-omniverse:/root/.nvidia-omniverse
+      - ${HOME}/.local/share/ov:/root/.local/share/ov
+    ports:
+      - "${PATHVLA_API_PORT:-8000}:8000"
+      - "${PATHVLA_DASHBOARD_PORT:-8501}:8501"
+      - "8211:8211"
+      - "8899:8899"
+      - "49100-49200:49100-49200/udp"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    shm_size: "4gb"
+    stdin_open: true
+    tty: true
+
+  vla-server:
+    image: pathvla-unitree-isaac-live:latest
+    container_name: pathvla-vla-server
+    user: "0:0"
+    environment:
+      VLA_LLM_BASE_URL: ${VLA_LLM_BASE_URL:-}
+      VLA_LLM_API_KEY: ${VLA_LLM_API_KEY:-}
+      VLA_LLM_MODEL: ${VLA_LLM_MODEL:-gemma-4}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+      PATHVLA_VLA_HOST: ${PATHVLA_VLA_HOST:-0.0.0.0}
+      PATHVLA_VLA_PORT: ${PATHVLA_VLA_PORT:-5555}
+      PYTHONPATH: /workspace/pathvla-unitree-isaac-live
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    working_dir: /workspace/pathvla-unitree-isaac-live
+    volumes:
+      - ..:/workspace/pathvla-unitree-isaac-live
+      - ../outputs:/workspace/pathvla-unitree-isaac-live/outputs
+    command: ["bash", "scripts/isaac_python.sh", "-m", "uvicorn", "apps.vla_server:app", "--host", "0.0.0.0", "--port", "5555"]
+    ports:
+      - "${PATHVLA_VLA_PORT:-5555}:5555"

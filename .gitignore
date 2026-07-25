@@ -1,0 +1,22 @@
+.DS_Store
+.env
+.idea/
+.vscode/
+.pytest_cache/
+.venv/
+.venv-*/
+__pycache__/
+*.py[cod]
+*.log
+MUJOCO_LOG.TXT
+
+outputs/*
+!outputs/.gitkeep
+
+# Reproducibly downloaded by setup scripts.
+assets/mujoco_menagerie/
+demo_2/vendor/
+isaac_ext/pathvla_unitree/assets/unitree_model/
+
+# Local source/export files are not needed by the runtime.
+*.fbx

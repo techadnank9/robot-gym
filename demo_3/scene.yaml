@@ -1,0 +1,30 @@
+protocol_version: "3.0"
+name: vlge_g1_crossing_delivery
+seed: 3
+physics:
+  timestep_s: 0.002
+  control_decimation: 10
+  floor_friction: [0.9, 0.02, 0.002]
+arena:
+  bounds: [-3.7, 3.7, -2.1, 2.1]
+  checkpoint_x: 0.0
+players:
+  p1:
+    color: [0.96, 0.20, 0.12, 1.0]
+    spawn: [-2.15, -0.72, 0.793]
+    yaw_deg: 0.0
+    object: [-1.55, -1.02, 0.78]
+    goal: [3.10, 0.72, 0.06]
+  p2:
+    color: [0.16, 0.55, 1.0, 1.0]
+    spawn: [2.15, 0.72, 0.793]
+    yaw_deg: 180.0
+    object: [1.55, 1.02, 0.78]
+    goal: [-3.10, -0.72, 0.06]
+scoring:
+  goal_half_size: [0.36, 0.36, 0.06]
+  stable_seconds: 1.0
+  max_linear_speed_mps: 0.05
+  max_angular_speed_rps: 0.25
+  stale_target_seconds: 0.10
+  disconnect_dq_seconds: 30.0

@@ -1,0 +1,9 @@
+eval:
+  mode: recorded_headless
+  require_vla: true
+  default_scene: room
+  stop_on_failure: true
+  metrics:
+    - success_rate
+    - trace_path_length_m
+    - min_obstacle_distance_m

@@ -1,0 +1,12 @@
+# Install these in the dedicated Linux control environment.
+pydantic>=2.7,<3
+PyYAML>=6.0
+mujoco>=3.3,<4
+google-genai>=1.0
+numpy>=1.26,<3
+imageio>=2.34
+imageio-ffmpeg>=0.5
+Pillow>=10.0
+
+# Unitree's SDK is intentionally installed from its official source checkout,
+# after CycloneDDS is configured. See demo_2/README.md.

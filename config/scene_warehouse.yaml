@@ -1,0 +1,76 @@
+scene:
+  name: warehouse
+  environment_usd_path_env: ISAAC_WAREHOUSE_ENV_USD_PATH
+  environment_prim_path: /World/Scene/Environment
+  bounds:
+    x: [-8.0, 8.0]
+    y: [-6.0, 6.0]
+    z_floor: 0.0
+  room:
+    wall_height: 3.0
+    wall_thickness: 0.15
+  robot_spawn: [-5.5, -4.5, 0.82]
+  objects:
+    - name: red_bin
+      type: container
+      shape: cube
+      color: [1.0, 0.0, 0.0]
+      size: [0.7, 0.7, 0.8]
+      pose: [5.4, 3.6, 0.4]
+      avoidance_radius: 0.8
+    - name: chair
+      type: obstacle
+      shape: cube
+      color: [0.3, 0.3, 0.35]
+      size: [0.6, 0.6, 1.0]
+      pose: [-0.8, -0.5, 0.5]
+      avoidance_radius: 0.8
+    - name: table
+      type: inspectable
+      shape: cube
+      color: [0.6, 0.4, 0.2]
+      size: [1.8, 1.0, 0.8]
+      pose: [2.0, -1.0, 0.4]
+      avoidance_radius: 1.1
+    - name: bottle
+      type: pickup
+      shape: cylinder
+      color: [0.1, 0.6, 0.9]
+      size: [0.12, 0.12, 0.35]
+      pose: [2.0, -1.0, 0.98]
+      avoidance_radius: 0.2
+    - name: home_marker
+      type: home
+      shape: cylinder
+      color: [0.0, 1.0, 0.0]
+      size: [0.5, 0.5, 0.02]
+      pose: [-6.2, -4.8, 0.01]
+      avoidance_radius: 0.3
+    - name: shelf_a
+      type: obstacle
+      shape: cube
+      color: [0.75, 0.75, 0.8]
+      size: [0.8, 3.2, 2.4]
+      pose: [-1.8, 2.0, 1.2]
+      avoidance_radius: 1.1
+    - name: shelf_b
+      type: obstacle
+      shape: cube
+      color: [0.75, 0.75, 0.8]
+      size: [0.8, 3.0, 2.4]
+      pose: [1.2, 2.2, 1.2]
+      avoidance_radius: 1.1
+    - name: pallet_stack
+      type: obstacle
+      shape: cube
+      color: [0.5, 0.35, 0.2]
+      size: [1.4, 1.2, 1.2]
+      pose: [4.0, -2.5, 0.6]
+      avoidance_radius: 1.0
+  cameras:
+    - name: main_camera
+      pose: [6.8, -5.8, 4.8]
+      look_at: [0.5, 0.2, 1.1]
+    - name: top_down_camera
+      pose: [0.0, 0.0, 14.0]
+      look_at: [0.0, 0.0, 0.0]

@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/unitreerobotics/unitree_sdk2_python.git",
+  "revision": "65691c8a8bc53b98d3976dba4dbf9d5d20b2e7f5",
+  "revision_date_utc": "2026-07-21T09:07:41Z",
+  "verified_interfaces": [
+    "unitree_sdk2py.core.channel.ChannelFactoryInitialize",
+    "unitree_sdk2py.g1.loco.g1_loco_client.LocoClient",
+    "unitree_sdk2py.g1.arm.g1_arm_action_client.G1ArmActionClient"
+  ]
+}

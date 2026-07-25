@@ -1,0 +1,19 @@
+vm:
+  provider: brev
+  os: ubuntu-22.04
+  gpu_required: true
+  notes:
+    - Open livestream and API ports in the Brev networking panel.
+    - Use SSH or VS Code Remote from Mac. Do not run Isaac locally on the Mac.
+
+checks:
+  - scripts/check_gpu.sh
+  - scripts/check_isaac.sh
+  - scripts/check_livestream.sh
+
+recommended_ports:
+  api: 8000
+  dashboard: 8501
+  webrtc_signaling: 8211
+  webrtc_http: 8899
+  webrtc_udp: "49100-49200"

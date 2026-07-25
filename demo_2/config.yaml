@@ -1,0 +1,20 @@
+robot_model: g1_29dof
+sdk_timeout_s: 5.0
+
+# The official SDK's G1 LocoClient Start() state is 500. Confirm this against
+# the firmware installed on the robot before changing the allowlist.
+allowed_fsm_ids: [500]
+
+limits:
+  max_forward_mps: 0.15
+  max_lateral_mps: 0.08
+  max_yaw_rate_rps: 0.20
+  max_command_duration_s: 0.50
+  stop_duration_s: 0.20
+  settle_time_s: 0.25
+
+# These are finite actions implemented by Unitree's high-level arm-action
+# service. They are not grasp primitives and do not control a dexterous hand.
+allowed_arm_actions:
+  release-arm: 99
+  right-hand-up: 23

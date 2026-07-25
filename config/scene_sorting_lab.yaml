@@ -1,0 +1,84 @@
+scene:
+  name: sorting_lab
+  environment_usd_path_env: ISAAC_SORTING_LAB_USD_PATH
+  environment_prim_path: /World/Scene/Environment
+  bounds:
+    x: [-4.5, 4.5]
+    y: [-3.5, 3.5]
+    z_floor: 0.0
+  room:
+    wall_height: 2.8
+    wall_thickness: 0.12
+  robot_spawn: [0.0, -2.5, 0.82]
+  objects:
+    - name: sorting_table
+      type: inspectable
+      shape: cube
+      semantic_color: gray
+      color: [0.26, 0.28, 0.31]
+      size: [2.4, 0.85, 0.72]
+      pose: [-0.8, 0.2, 0.36]
+      avoidance_radius: 1.25
+    - name: red_cube
+      type: sort_item
+      shape: cube
+      semantic_color: red
+      color: [0.95, 0.08, 0.06]
+      size: [0.18, 0.18, 0.18]
+      pose: [-1.55, -0.42, 0.81]
+      avoidance_radius: 0.15
+    - name: blue_cube
+      type: sort_item
+      shape: cube
+      semantic_color: blue
+      color: [0.05, 0.26, 0.95]
+      size: [0.18, 0.18, 0.18]
+      pose: [-1.55, -0.14, 0.81]
+      avoidance_radius: 0.15
+    - name: red_can
+      type: sort_item
+      shape: cylinder
+      semantic_color: red
+      color: [0.88, 0.05, 0.04]
+      size: [0.14, 0.14, 0.26]
+      pose: [-1.55, 0.14, 0.85]
+      avoidance_radius: 0.14
+    - name: blue_can
+      type: sort_item
+      shape: cylinder
+      semantic_color: blue
+      color: [0.04, 0.34, 0.92]
+      size: [0.14, 0.14, 0.26]
+      pose: [-1.55, 0.42, 0.85]
+      avoidance_radius: 0.14
+    - name: red_bin
+      type: container
+      shape: bucket
+      semantic_color: red
+      color: [0.72, 0.05, 0.04]
+      size: [0.75, 0.75, 0.58]
+      pose: [2.7, 1.15, 0.0]
+      avoidance_radius: 0.55
+    - name: blue_bin
+      type: container
+      shape: bucket
+      semantic_color: blue
+      color: [0.03, 0.20, 0.72]
+      size: [0.75, 0.75, 0.58]
+      pose: [2.7, -0.25, 0.0]
+      avoidance_radius: 0.55
+    - name: safety_pillar
+      type: obstacle
+      shape: cylinder
+      semantic_color: yellow
+      color: [0.96, 0.72, 0.08]
+      size: [0.34, 0.34, 1.1]
+      pose: [1.2, 0.55, 0.55]
+      avoidance_radius: 0.52
+  cameras:
+    - name: main_camera
+      pose: [3.7, -3.0, 2.6]
+      look_at: [0.2, 0.1, 0.75]
+    - name: overhead_camera
+      pose: [0.0, 0.0, 8.5]
+      look_at: [0.0, 0.0, 0.0]

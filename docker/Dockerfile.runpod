@@ -1,0 +1,30 @@
+FROM runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/opt/robot-gym
+ENV MUJOCO_GL=egl
+ENV ROBOT_GYM_PYTHON=python3
+
+WORKDIR /opt/robot-gym
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates \
+      ffmpeg \
+      git \
+      libegl1 \
+      libgl1 \
+      libglfw3 \
+      libosmesa6 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-runpod.txt .
+RUN python3 -m pip install --no-cache-dir -r requirements-runpod.txt
+
+COPY . .
+RUN bash scripts/download_g1_mjcf.sh \
+    && bash scripts/setup_demo_2_sil.sh
+
+EXPOSE 8085 8765
+
+CMD ["bash", "scripts/run_g1_demo_5_runpod.sh", "play"]

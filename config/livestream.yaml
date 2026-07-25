@@ -1,0 +1,9 @@
+livestream:
+  default_mode: webrtc
+  signaling_port: 8211
+  http_port: 8899
+  udp_port_range: "49100-49200"
+  required_extensions:
+    - omni.kit.livestream.webrtc
+    - omni.services.streamclient.webrtc
+  browser_path_hint: "Open the Isaac streaming client or supported browser endpoint exposed by the selected Isaac build."

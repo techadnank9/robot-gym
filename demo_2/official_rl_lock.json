@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/unitreerobotics/unitree_rl_gym.git",
+  "revision": "276801e46c5d433564f24658bac64f254b7d2d4b",
+  "revision_date": "2025-07-25T18:20:21+08:00",
+  "policy_relative_path": "deploy/pre_train/g1/motion.pt",
+  "policy_sha256": "cf668f75b90d1abf73d2b87612a6e76bccc61ff7e083b63582d3f6aaa3c1759d",
+  "mujoco_config_relative_path": "deploy/deploy_mujoco/configs/g1.yaml",
+  "mujoco_config_sha256": "73044e7d355c61915695c16d6e09eb3efef46eec1e3d708fd3eb9157dfe3bbbb",
+  "mujoco_model_relative_path": "resources/robots/g1_description/scene.xml",
+  "real_config_relative_path": "deploy/deploy_real/configs/g1.yaml",
+  "real_config_sha256": "fb6fd920c9180baf9a50c389c8119a9f25e0096626de7de982c127ecfbffad78"
+}

@@ -55,6 +55,14 @@ online between matches, starts the selected MuJoCo process, and exposes Rematch
 after a winner is verified. AI seats use Gemini when their key is configured
 and fall back to the deterministic validation policy when no key is present.
 
+You can also paste a Gemini API key into the optional landing-page field. It is
+sent in the HTTPS match-start request body, injected only into that child match,
+and never written to the repository, output evidence, launcher state, URL,
+`localStorage`, or `sessionStorage`. The input is cleared immediately after
+launch. Enter it again for an AI rematch; leaving it blank uses the Pod's
+configured adapter or scripted fallback. Do not enter a key through a plain
+remote HTTP URL.
+
 For a human seat, click once inside the live arena and use:
 
 - connected gamepad — automatically preferred over keyboard;

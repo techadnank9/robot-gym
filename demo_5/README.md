@@ -84,6 +84,13 @@ AI seats use Gemini Robotics-ER when the corresponding player key or shared
 `GEMINI_API_KEY` exists. Without a key they use the local scripted validation
 policy, so the landing page remains playable out of the box.
 
+The landing page also accepts an optional temporary Gemini key for AI modes.
+It travels only in the RunPod HTTPS POST body and is supplied to the spawned
+match process for that match. It is not placed in URLs, browser storage,
+launcher telemetry, match evidence, or logs, and the password field clears
+after submission. AI rematches require re-entry; a blank field uses the
+server-configured adapter or scripted fallback.
+
 For a joystick connected to your laptop or desktop, press any controller button
 after opening the page. The browser automatically switches from keyboard to the
 Gamepad API: left stick moves, right stick turns, A/Cross grasps, X/Square

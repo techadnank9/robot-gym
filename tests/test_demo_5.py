@@ -83,6 +83,34 @@ def test_landing_page_exposes_all_match_modes_and_rematch():
     assert poster.stat().st_size > 50_000
 
 
+def test_landing_page_api_key_is_password_only_and_not_persisted():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "demo_5" / "web" / "index.html").read_text(encoding="utf-8")
+    lobby = (root / "demo_5" / "web" / "lobby.js").read_text(encoding="utf-8")
+
+    assert 'id="match-api-key"' in html
+    assert 'id="rematch-api-key"' in html
+    assert 'type="password"' in html
+    assert 'autocomplete="off"' in html
+    assert "{ mode, apiKey }" in lobby
+    assert "keyInput.value = \"\"" in lobby
+    assert 'searchParams.set("api' not in lobby
+    assert 'sessionStorage.setItem("api' not in lobby
+    assert 'localStorage' not in lobby
+
+
+def test_temporary_api_key_validation_never_echoes_secret():
+    from demo_5.launcher import validate_temporary_api_key
+
+    assert validate_temporary_api_key(None) is None
+    assert validate_temporary_api_key("") is None
+    assert validate_temporary_api_key("  temporary-key-123  ") == "temporary-key-123"
+    with pytest.raises(ValueError, match="between 8 and 512"):
+        validate_temporary_api_key("short")
+    with pytest.raises(ValueError, match="whitespace"):
+        validate_temporary_api_key("temporary key with spaces")
+
+
 def test_persistent_launcher_builds_all_three_safe_match_commands(
     monkeypatch,
     tmp_path,
@@ -148,6 +176,77 @@ def test_persistent_launcher_uses_gemini_only_when_a_key_exists(
     _, adapters = launcher.command_for_mode("ai-vs-ai")
 
     assert adapters == {"p1": "gemini-er", "p2": "gemini-er"}
+
+
+def test_ui_api_key_is_injected_only_into_child_memory(monkeypatch, tmp_path):
+    from demo_5.launcher import MatchLauncher
+
+    secret = "temporary-gemini-key-123"
+    for name in (
+        "GEMINI_API_KEY",
+        "DEMO3_P1_GEMINI_API_KEY",
+        "DEMO3_P2_GEMINI_API_KEY",
+        "DEMO5_P1_ADAPTER",
+        "DEMO5_P2_ADAPTER",
+        "DEMO5_OPPONENT_ADAPTER",
+    ):
+        monkeypatch.delenv(name, raising=False)
+
+    class FakeProcess:
+        pid = 200
+
+        def __init__(self):
+            self.returncode = None
+            self.done = threading.Event()
+
+        def poll(self):
+            return self.returncode
+
+        def terminate(self):
+            self.returncode = -15
+            self.done.set()
+
+        def kill(self):
+            self.returncode = -9
+            self.done.set()
+
+        def wait(self, timeout=None):
+            if not self.done.wait(timeout):
+                raise subprocess.TimeoutExpired("fake", timeout)
+            return self.returncode
+
+    captured = {}
+
+    def popen(command, **kwargs):
+        captured["command"] = command
+        captured["environment"] = kwargs["env"]
+        return FakeProcess()
+
+    launcher = MatchLauncher(
+        python_bin="/usr/bin/python3",
+        project_root=tmp_path,
+        match_host="0.0.0.0",
+        match_http_port=8086,
+        websocket_port=8765,
+        grasp_mode="easy",
+        render_profile="performance",
+        popen=popen,
+    )
+    state = launcher.start_match(
+        "ai-vs-ai",
+        temporary_api_key=secret,
+    )
+
+    assert secret not in captured["command"]
+    assert captured["environment"]["GEMINI_API_KEY"] == secret
+    assert captured["environment"]["DEMO3_P1_GEMINI_API_KEY"] == secret
+    assert captured["environment"]["DEMO3_P2_GEMINI_API_KEY"] == secret
+    assert state["adapters"] == {"p1": "gemini-er", "p2": "gemini-er"}
+    assert secret not in json.dumps(state)
+    assert secret not in json.dumps(launcher.state())
+    assert not hasattr(launcher, "temporary_api_key")
+
+    launcher.close()
 
 
 def test_persistent_launcher_replaces_finished_or_active_match(tmp_path):

@@ -10,6 +10,11 @@ const copyP2 = document.querySelector("#copy-p2");
 const copyStatus = document.querySelector("#copy-status");
 const rematchButton = document.querySelector("#rematch-button");
 const rematchNote = document.querySelector("#rematch-note");
+const matchApiKey = document.querySelector("#match-api-key");
+const rematchApiKey = document.querySelector("#rematch-api-key");
+const toggleApiKey = document.querySelector("#toggle-api-key");
+const apiKeyNote = document.querySelector("#api-key-note");
+const rematchAuth = document.querySelector("#rematch-auth");
 const seatFromUrl = new URLSearchParams(location.search).get("player");
 
 let launcherAvailable = false;
@@ -66,10 +71,14 @@ async function startMatch(mode, { rematch = false } = {}) {
   if (starting) return;
   launcherError.textContent = "";
   setBusy(true, rematch ? "RESETTING ARENA" : "STARTING MATCH");
+  const keyInput = rematch ? rematchApiKey : matchApiKey;
+  const apiKey = mode === "human-vs-human" ? "" : keyInput?.value.trim();
+  const request = apiKey ? { mode, apiKey } : { mode };
+  if (keyInput) keyInput.value = "";
   try {
     const state = await launcherRequest("/api/matches", {
       method: "POST",
-      body: JSON.stringify({ mode }),
+      body: JSON.stringify(request),
     });
     selectedMode = state.mode;
     sessionStorage.setItem("demo5-match-mode", selectedMode);
@@ -94,6 +103,13 @@ async function startMatch(mode, { rematch = false } = {}) {
 
 modeButtons.forEach((button) => {
   button.addEventListener("click", () => startMatch(button.dataset.mode));
+});
+
+toggleApiKey?.addEventListener("click", () => {
+  const showing = matchApiKey.type === "text";
+  matchApiKey.type = showing ? "password" : "text";
+  toggleApiKey.textContent = showing ? "SHOW" : "HIDE";
+  toggleApiKey.setAttribute("aria-label", showing ? "Show API key" : "Hide API key");
 });
 
 enterP1?.addEventListener("click", () => {
@@ -124,9 +140,11 @@ window.addEventListener("robotgym:match-state", (event) => {
   }
   if (state.winner && selectedMode === "human-vs-human" && seatFromUrl === "p2") {
     rematchButton.hidden = true;
+    rematchAuth.hidden = true;
     rematchNote.textContent = "P1 CONTROLS THE REMATCH";
   } else if (state.winner) {
     rematchButton.hidden = false;
+    rematchAuth.hidden = selectedMode === "human-vs-human";
   }
 });
 
@@ -155,6 +173,16 @@ async function initializeLauncher() {
     launcherAvailable = false;
     launcherStatus.textContent = "CONNECTING TO MATCH";
   }
+}
+
+if (
+  location.protocol !== "https:" &&
+  !["localhost", "127.0.0.1"].includes(location.hostname)
+) {
+  apiKeyNote.textContent = "USE THE RUNPOD HTTPS URL BEFORE ENTERING A KEY";
+  matchApiKey.disabled = true;
+  rematchApiKey.disabled = true;
+  toggleApiKey.disabled = true;
 }
 
 initializeLauncher();

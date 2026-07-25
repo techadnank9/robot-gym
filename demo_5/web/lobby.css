@@ -155,6 +155,61 @@
   animation: launcher-rise .7s .3s ease both;
 }
 
+.api-key-control {
+  width: min(560px, 100%);
+  margin-bottom: 15px;
+  animation: launcher-rise .72s .34s ease both;
+}
+
+.api-key-line {
+  display: grid;
+  grid-template-columns: 156px minmax(0, 1fr) 42px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.24);
+}
+
+.api-key-line label,
+.api-key-control small,
+.rematch-auth span {
+  font: 500 8px/1 IBM Plex Mono, monospace;
+  letter-spacing: .12em;
+}
+
+.api-key-line label { color: rgba(255,255,255,.54); }
+.api-key-control small {
+  display: block;
+  margin-top: 7px;
+  color: rgba(255,255,255,.36);
+}
+
+.api-key-line input,
+.rematch-auth input {
+  width: 100%;
+  min-width: 0;
+  height: 35px;
+  color: white;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: 500 11px/1 IBM Plex Mono, monospace;
+}
+
+.api-key-line input::placeholder,
+.rematch-auth input::placeholder { color: rgba(255,255,255,.3); }
+.api-key-line input:focus { box-shadow: inset 0 -1px var(--launcher-accent); }
+.api-key-line input:disabled { cursor: not-allowed; opacity: .45; }
+
+.api-key-line button {
+  height: 30px;
+  padding: 0;
+  color: var(--launcher-accent);
+  border: 0;
+  background: transparent;
+  font: 600 8px/1 IBM Plex Mono, monospace;
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+
 .mode-list {
   width: min(560px, 100%);
   border-top: 1px solid rgba(255,255,255,.2);
@@ -256,9 +311,18 @@
 }
 
 .result.show { pointer-events: auto; }
+.rematch-auth {
+  display: grid;
+  width: min(300px, 70vw);
+  margin: 24px auto 0;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,.28);
+}
+.rematch-auth span { color: rgba(255,255,255,.52); }
+.rematch-auth input { text-align: center; }
 .result .rematch-button {
   justify-self: center;
-  margin-top: 28px;
+  margin-top: 16px;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity .3s .25s ease, transform .3s .25s ease;
@@ -296,6 +360,8 @@
   }
   .launcher-copy h1 { font-size: clamp(49px, 15vw, 72px); }
   .launcher-intro { margin: 19px 0 17px; font-size: 12px; }
+  .api-key-line { grid-template-columns: 1fr 38px; }
+  .api-key-line label { grid-column: 1 / -1; margin-bottom: 2px; }
   .mode-option {
     grid-template-columns: 28px 1fr 22px;
     min-height: 58px;
@@ -312,6 +378,7 @@
   .launcher-kicker,
   .launcher-copy h1,
   .launcher-intro,
+  .api-key-control,
   .mode-list,
   .seat-panel { animation: none; }
 }

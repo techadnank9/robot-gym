@@ -30,6 +30,23 @@
           Race two G1s through one shared physical task. First verified delivery wins.
         </p>
 
+        <div class="api-key-control" id="api-key-control">
+          <div class="api-key-line">
+            <label for="match-api-key">TEMPORARY GEMINI API KEY</label>
+            <input
+              id="match-api-key"
+              type="password"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="Optional — uses configured policy when blank"
+            />
+            <button id="toggle-api-key" type="button" aria-label="Show API key">SHOW</button>
+          </div>
+          <small id="api-key-note">SENT ONCE · MEMORY ONLY · CLEARED AFTER LAUNCH</small>
+        </div>
+
         <div class="mode-list" id="mode-list" aria-label="Match modes">
           <button class="mode-option" type="button" data-mode="ai-vs-ai">
             <span>01</span>
@@ -125,6 +142,17 @@
         <div class="result" id="result" aria-live="polite">
           <span>DELIVERY VERIFIED</span>
           <strong id="winner">P1 WON</strong>
+          <label class="rematch-auth" id="rematch-auth" for="rematch-api-key">
+            <span>GEMINI KEY FOR THIS REMATCH</span>
+            <input
+              id="rematch-api-key"
+              type="password"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="Optional temporary key"
+            />
+          </label>
           <button class="rematch-button" id="rematch-button" type="button">REMATCH</button>
           <small class="rematch-note" id="rematch-note"></small>
         </div>

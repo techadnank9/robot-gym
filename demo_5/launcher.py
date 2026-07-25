@@ -18,6 +18,19 @@ MATCH_MODES = ("ai-vs-ai", "human-vs-ai", "human-vs-human")
 _ADAPTERS = {"gemini-er", "scripted", "http"}
 
 
+def validate_temporary_api_key(value: Any) -> str | None:
+    if value is None or value == "":
+        return None
+    if not isinstance(value, str):
+        raise ValueError("apiKey must be a string.")
+    key = value.strip()
+    if not 8 <= len(key) <= 512:
+        raise ValueError("apiKey must be between 8 and 512 characters.")
+    if any(character.isspace() or ord(character) < 33 for character in key):
+        raise ValueError("apiKey cannot contain whitespace or control characters.")
+    return key
+
+
 class MatchLauncher:
     """Persistent, shell-free supervisor for browser-selected Demo 5 matches."""
 
@@ -67,12 +80,24 @@ class MatchLauncher:
                 "modes": list(MATCH_MODES),
             }
 
-    def start_match(self, mode: str) -> dict[str, Any]:
+    def start_match(
+        self,
+        mode: str,
+        *,
+        temporary_api_key: str | None = None,
+    ) -> dict[str, Any]:
         if mode not in MATCH_MODES:
             raise ValueError(f"Unsupported match mode: {mode}")
+        temporary_api_key = validate_temporary_api_key(temporary_api_key)
+        temporary_key_enabled = bool(
+            temporary_api_key and mode != "human-vs-human"
+        )
         with self._lock:
             self._stop_locked()
-            command, adapters = self.command_for_mode(mode)
+            command, adapters = self.command_for_mode(
+                mode,
+                temporary_gemini_key=temporary_key_enabled,
+            )
             self._generation += 1
             generation = self._generation
             self._mode = mode
@@ -81,6 +106,10 @@ class MatchLauncher:
             self._status = "starting"
             environment = os.environ.copy()
             environment["PYTHONPATH"] = str(self.project_root)
+            if temporary_key_enabled and temporary_api_key is not None:
+                environment["GEMINI_API_KEY"] = temporary_api_key
+                environment["DEMO3_P1_GEMINI_API_KEY"] = temporary_api_key
+                environment["DEMO3_P2_GEMINI_API_KEY"] = temporary_api_key
             try:
                 process = self._popen(
                     command,
@@ -101,7 +130,12 @@ class MatchLauncher:
             ).start()
             return self.state_unlocked()
 
-    def command_for_mode(self, mode: str) -> tuple[list[str], dict[str, str]]:
+    def command_for_mode(
+        self,
+        mode: str,
+        *,
+        temporary_gemini_key: bool = False,
+    ) -> tuple[list[str], dict[str, str]]:
         if mode not in MATCH_MODES:
             raise ValueError(f"Unsupported match mode: {mode}")
         command = [
@@ -125,8 +159,14 @@ class MatchLauncher:
         ]
         adapters: dict[str, str] = {}
         if mode == "ai-vs-ai":
-            p1_adapter = self._adapter_for("p1")
-            p2_adapter = self._adapter_for("p2")
+            p1_adapter = self._adapter_for(
+                "p1",
+                temporary_gemini_key=temporary_gemini_key,
+            )
+            p2_adapter = self._adapter_for(
+                "p2",
+                temporary_gemini_key=temporary_gemini_key,
+            )
             adapters = {"p1": p1_adapter, "p2": p2_adapter}
             command.extend(
                 [
@@ -143,7 +183,10 @@ class MatchLauncher:
             self._append_endpoint(command, "p1", p1_adapter)
             self._append_endpoint(command, "p2", p2_adapter)
         elif mode == "human-vs-ai":
-            p2_adapter = self._adapter_for("p2")
+            p2_adapter = self._adapter_for(
+                "p2",
+                temporary_gemini_key=temporary_gemini_key,
+            )
             adapters = {"p2": p2_adapter}
             command.extend(
                 [
@@ -191,7 +234,14 @@ class MatchLauncher:
             "modes": list(MATCH_MODES),
         }
 
-    def _adapter_for(self, player_id: str) -> str:
+    def _adapter_for(
+        self,
+        player_id: str,
+        *,
+        temporary_gemini_key: bool = False,
+    ) -> str:
+        if temporary_gemini_key:
+            return "gemini-er"
         explicit = os.getenv(f"DEMO5_{player_id.upper()}_ADAPTER")
         if player_id == "p2":
             explicit = explicit or os.getenv("DEMO5_OPPONENT_ADAPTER")
@@ -267,7 +317,11 @@ class LauncherHandler(_Demo5StaticHandler):
             if not isinstance(value, dict):
                 raise ValueError("Request body must be a JSON object.")
             mode = str(value.get("mode") or "")
-            state = self.launcher.start_match(mode)
+            temporary_api_key = validate_temporary_api_key(value.get("apiKey"))
+            state = self.launcher.start_match(
+                mode,
+                temporary_api_key=temporary_api_key,
+            )
         except (json.JSONDecodeError, ValueError) as exc:
             self._send_json({"status": "error", "error": str(exc)}, status=400)
             return

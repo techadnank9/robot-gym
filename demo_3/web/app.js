@@ -1,4 +1,7 @@
 const qs = new URLSearchParams(location.search);
+const requestedPlayer = ["p1", "p2"].includes(qs.get("player"))
+  ? qs.get("player")
+  : null;
 const demo5Host = location.port === "8085" ||
   /-8085\.proxy\.runpod\.net$/.test(location.hostname);
 const socketPort = qs.get("wsPort") || (demo5Host ? "8765" : "8763");
@@ -31,7 +34,7 @@ const elements = {
 
 let activeSocket = null;
 let keyboardPlayer = null;
-let sequence = 0;
+let sequence = Date.now() * 1000;
 let selectedSkill = "wait";
 let handClose = 0;
 let previousGamepadButtons = [];
@@ -81,14 +84,23 @@ function update(message) {
   elements.clock.textContent = formatTime(state.elapsedTime);
   updatePlayer("p1", state.players.p1);
   updatePlayer("p2", state.players.p2);
-  const browserPlayer = ["p1", "p2"].find((id) =>
+  const browserPlayers = ["p1", "p2"].filter((id) =>
     state.players[id].mode === "human" &&
     state.players[id].model_name === "Browser keyboard"
   );
-  keyboardPlayer = browserPlayer || null;
-  elements.keyboardHelp.hidden = !keyboardPlayer;
+  keyboardPlayer = requestedPlayer && browserPlayers.includes(requestedPlayer)
+    ? requestedPlayer
+    : (browserPlayers.length === 1 ? browserPlayers[0] : null);
+  const seatSelectionRequired = browserPlayers.length > 1 && !keyboardPlayer;
+  elements.keyboardHelp.hidden = !keyboardPlayer && !seatSelectionRequired;
   if (keyboardPlayer) {
     updateInputHelp(connectedGamepad());
+  } else if (seatSelectionRequired) {
+    elements.keyboardPlayer.textContent = "CHOOSE PLAYER";
+    if (elements.inputHelp) {
+      elements.inputHelp.textContent =
+        "OPEN THIS PAGE WITH ?player=p1 OR ?player=p2";
+    }
   }
   setFrame("broadcast-feed", message.frames.broadcast);
   setFrame("p1-feed", message.frames.p1);

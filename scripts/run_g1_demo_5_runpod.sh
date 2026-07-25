@@ -59,6 +59,14 @@ case "$MODE" in
       --p2 human --p2-input idle \
       "$@"
     ;;
+  human-vs-human|hvh)
+    exec "$PYTHON_BIN" -m demo_5 \
+      "${COMMON[@]}" \
+      --p1 human --p1-input keyboard \
+      --p2 human --p2-input keyboard \
+      --keyboard-ready-timeout "${DEMO5_TWO_PLAYER_READY_TIMEOUT:-300}" \
+      "$@"
+    ;;
   gemini)
     [[ -n "${DEMO3_P2_GEMINI_API_KEY:-${GEMINI_API_KEY:-}}" ]] || {
       echo "Set DEMO3_P2_GEMINI_API_KEY or GEMINI_API_KEY first." >&2
@@ -85,7 +93,7 @@ case "$MODE" in
     exec "$PYTHON_BIN" -m demo_5 "${COMMON[@]}" "$@"
     ;;
   *)
-    echo "Usage: scripts/run_g1_demo_5_runpod.sh {play|practice|gemini|ai-vs-ai|validate|match} [options]" >&2
+    echo "Usage: scripts/run_g1_demo_5_runpod.sh {play|practice|human-vs-human|hvh|gemini|ai-vs-ai|validate|match} [options]" >&2
     exit 2
     ;;
 esac

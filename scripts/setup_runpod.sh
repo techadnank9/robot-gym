@@ -49,3 +49,5 @@ echo
 echo "RunPod runtime ready."
 echo "Start a browser-playable match with:"
 echo "  scripts/run_g1_demo_5_runpod.sh play"
+echo "Or start a two-browser human match with:"
+echo "  scripts/run_g1_demo_5_runpod.sh human-vs-human"

@@ -230,6 +230,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         live=live,
                         gamepads=gamepads,
                         keyboard_players=keyboard_players,
+                        allow_multiple_browser_players=True,
                     )
             else:
                 adapter_name = args.p1_adapter if config.player_id == "p1" else args.p2_adapter
@@ -242,6 +243,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 )
                 slots[config.player_id] = PolicySlot(adapter=adapter)
                 arena.players[config.player_id].status.model_name = adapter.model_name
+
+        if len(keyboard_players) > 1 and live is not None:
+            _print_remote_player_urls(
+                live.url,
+                keyboard_players,
+                http_port=args.http_port,
+            )
 
         print(f"Match mode: {match_mode(player_configs).value}")
         print(
@@ -431,6 +439,29 @@ def _restore_broadcast_camera(arena: SimToRealG1RaceArena) -> None:
     """Undo MuJoCo's built-in arrow-key camera movement during native teleop."""
 
     arena.reset_viewer_camera()
+
+
+def _player_url(base_url: str, player_id: str) -> str:
+    separator = "&" if "?" in base_url else "?"
+    return f"{base_url}{separator}player={player_id}"
+
+
+def _print_remote_player_urls(
+    local_url: str,
+    player_ids: set[str],
+    *,
+    http_port: int,
+) -> None:
+    pod_id = os.getenv("RUNPOD_POD_ID")
+    if pod_id:
+        base_url = f"https://{pod_id}-{http_port}.proxy.runpod.net"
+        label = "RunPod"
+    else:
+        base_url = local_url
+        label = "Local"
+    print("Two-player browser seats (open one URL on each player's device):")
+    for player_id in sorted(player_ids):
+        print(f"  {player_id.upper()} {label}: {_player_url(base_url, player_id)}")
 
 
 def _schedule_demo5_policy_decisions(

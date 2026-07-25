@@ -49,6 +49,64 @@ def test_browser_match_client_includes_remote_gamepad_controls():
     assert 'selectedSkill = "navigate_goal"' in app
     assert 'selectedSkill = "release"' in app
     assert 'type: "reset_payload"' in app
+    assert 'qs.get("player")' in app
+    assert "browserPlayers.length > 1" in app
+    assert "Date.now() * 1000" in app
+
+
+def test_runpod_launcher_has_two_browser_human_mode():
+    root = Path(__file__).resolve().parents[1]
+    launcher = (root / "scripts" / "run_g1_demo_5_runpod.sh").read_text(
+        encoding="utf-8"
+    )
+
+    assert "human-vs-human|hvh)" in launcher
+    assert "--p1 human --p1-input keyboard" in launcher
+    assert "--p2 human --p2-input keyboard" in launcher
+
+
+def test_demo5_allows_two_distinct_browser_control_seats():
+    from demo_3.cli import _configure_human_input
+
+    arena = SimpleNamespace(
+        players={
+            "p1": SimpleNamespace(status=SimpleNamespace(model_name="")),
+            "p2": SimpleNamespace(status=SimpleNamespace(model_name="")),
+        }
+    )
+    live = SimpleNamespace(url="http://127.0.0.1:8085/?wsPort=8765")
+    keyboard_players: set[str] = set()
+
+    for player_id in ("p1", "p2"):
+        _configure_human_input(
+            arena,
+            player_id,
+            input_name="keyboard",
+            gamepad_index=0,
+            live=live,
+            gamepads={},
+            keyboard_players=keyboard_players,
+            allow_multiple_browser_players=True,
+        )
+
+    assert keyboard_players == {"p1", "p2"}
+    assert arena.players["p1"].status.model_name == "Browser keyboard"
+    assert arena.players["p2"].status.model_name == "Browser keyboard"
+
+
+def test_runpod_two_player_urls_assign_separate_seats(monkeypatch, capsys):
+    from demo_5.cli import _print_remote_player_urls
+
+    monkeypatch.setenv("RUNPOD_POD_ID", "pod-123")
+    _print_remote_player_urls(
+        "http://0.0.0.0:8085/?wsPort=8765",
+        {"p2", "p1"},
+        http_port=8085,
+    )
+    output = capsys.readouterr().out
+
+    assert "https://pod-123-8085.proxy.runpod.net?player=p1" in output
+    assert "https://pod-123-8085.proxy.runpod.net?player=p2" in output
 
 
 def test_sdk_channel_clips_slews_delays_and_watchdogs():
@@ -307,6 +365,48 @@ def test_keyboard_lobby_waits_for_first_valid_frame():
 
     _wait_for_keyboard_ready(arena, live, {"p1"}, timeout_s=0.5)
     assert submitted[0].player_id == "p1"
+
+
+def test_two_player_browser_lobby_waits_for_both_seats():
+    from demo_3.schemas import TeleopFrame
+    from demo_5.cli import _wait_for_keyboard_ready
+
+    players_by_id = {
+        player_id: SimpleNamespace(frame=TeleopFrame.neutral(player_id))
+        for player_id in ("p1", "p2")
+    }
+    frames = [
+        TeleopFrame.neutral("p1", sequence=1).model_dump(mode="json"),
+        TeleopFrame.neutral("p2", sequence=1).model_dump(mode="json"),
+    ]
+    commands = iter(
+        [
+            {"type": "teleop", "frame": frame}
+            for frame in frames
+        ]
+        + [None]
+    )
+    submitted = []
+
+    def submit(frame):
+        submitted.append(frame)
+        players_by_id[frame.player_id].frame = frame
+
+    arena = SimpleNamespace(
+        players=players_by_id,
+        state_payload=lambda: {"phase": "lobby"},
+        submit_frame=submit,
+    )
+    live = SimpleNamespace(
+        url="http://127.0.0.1:8085/?wsPort=8765",
+        publish=lambda state: None,
+        get_command=lambda: next(commands),
+    )
+
+    _wait_for_keyboard_ready(arena, live, {"p1", "p2"}, timeout_s=0.5)
+
+    assert {frame.player_id for frame in submitted} == {"p1", "p2"}
+    assert all(player.frame.sequence == 1 for player in players_by_id.values())
 
 
 def test_performance_render_profile_staggers_one_camera_per_publish():

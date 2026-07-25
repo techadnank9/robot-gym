@@ -217,9 +217,16 @@ def _configure_human_input(
     live: VLGEWorldAdapter | None,
     gamepads: dict[str, MacGamepad],
     keyboard_players: set[str],
+    allow_multiple_browser_players: bool = False,
 ) -> None:
     if input_name == "keyboard":
-        _configure_keyboard(arena, player_id, live, keyboard_players)
+        _configure_keyboard(
+            arena,
+            player_id,
+            live,
+            keyboard_players,
+            allow_multiple=allow_multiple_browser_players,
+        )
         return
     try:
         gamepad = MacGamepad(player_id, index=gamepad_index)
@@ -230,7 +237,13 @@ def _configure_human_input(
             raise RuntimeError(
                 f"{exc}. Browser keyboard fallback requires the live UI."
             ) from exc
-        _configure_keyboard(arena, player_id, live, keyboard_players)
+        _configure_keyboard(
+            arena,
+            player_id,
+            live,
+            keyboard_players,
+            allow_multiple=allow_multiple_browser_players,
+        )
         print(
             f"No usable gamepad for {player_id.upper()}; browser keyboard enabled at {live.url}"
         )
@@ -244,10 +257,12 @@ def _configure_keyboard(
     player_id: str,
     live: VLGEWorldAdapter | None,
     keyboard_players: set[str],
+    *,
+    allow_multiple: bool = False,
 ) -> None:
     if live is None:
         raise RuntimeError("Browser keyboard input requires the live UI")
-    if keyboard_players:
+    if keyboard_players and not allow_multiple:
         assigned = next(iter(keyboard_players)).upper()
         raise RuntimeError(
             "One local browser keyboard can control only one player; "

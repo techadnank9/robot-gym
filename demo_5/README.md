@@ -89,6 +89,17 @@ Run `scripts/run_g1_demo_5_runpod.sh practice` for one human and an idle
 opponent, or export `DEMO3_P2_GEMINI_API_KEY` and run
 `scripts/run_g1_demo_5_runpod.sh gemini` for Gemini Robotics-ER.
 
+For two humans on separate computers, run:
+
+```bash
+scripts/run_g1_demo_5_runpod.sh human-vs-human
+```
+
+The launcher prints distinct URLs ending in `?player=p1` and `?player=p2`.
+Each player opens only their assigned URL and can use a keyboard or a joystick
+connected to their own browser device. The lobby waits for telemetry from both
+players for up to five minutes before starting.
+
 Validate the constrained stack:
 
 ```bash

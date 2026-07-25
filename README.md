@@ -86,6 +86,18 @@ solo practice arena with the other G1 standing idle:
 scripts/run_g1_demo_5_runpod.sh practice
 ```
 
+For two remote humans, start:
+
+```bash
+scripts/run_g1_demo_5_runpod.sh human-vs-human
+```
+
+The launcher prints separate P1 and P2 RunPod URLs. Send one URL to each
+player; the `?player=p1` or `?player=p2` parameter assigns that browser to its
+robot. Each player can use a locally connected joystick through the browser
+Gamepad API, with no controller USB passthrough to the Pod. The match waits in
+the lobby for up to five minutes until both seats are connected.
+
 For Gemini Robotics-ER as Player 2:
 
 ```bash

@@ -7,7 +7,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from demo_3.schemas import PlayerConfig
+from demo_3.schemas import PlayerConfig, PlayerMode
 from demo_5.command_channel import SDKCompatibleCommandChannel
 from demo_5.evidence import compare_hardware_reference
 
@@ -136,6 +136,10 @@ def test_easy_grasp_discloses_and_locks_payload_to_hand():
         state = arena.state_payload()
         assert state["simToReal"]["privilegedControl"] is True
         assert state["simToReal"]["graspMode"] == "easy"
+        assert state["simToReal"]["easyGraspCaptureRadiusM"] == {
+            "human": 1.25,
+            "policy": 1.45,
+        }
         arena.players["p1"].status.current_skill = Skill.GRASP
         arena._update_arm_targets()
         arena._apply_contact_grip()
@@ -152,6 +156,40 @@ def test_easy_grasp_discloses_and_locks_payload_to_hand():
         arena._apply_contact_grip()
         assert not arena._easy_attached["p1"]
         assert arena.model.geom("p1_payload_geom").contype != 0
+    finally:
+        arena.close()
+
+
+def test_easy_grasp_gives_policy_player_a_small_capture_assist():
+    pytest.importorskip("mujoco")
+    from demo_5.arena import (
+        EASY_GRASP_RADIUS_HUMAN_M,
+        EASY_GRASP_RADIUS_POLICY_M,
+        POLICY_NEAR_OBJECT_RADIUS_M,
+        SimToRealG1RaceArena,
+    )
+
+    mixed_players = (
+        PlayerConfig(
+            player_id="p1",
+            display_name="Vector",
+            mode=PlayerMode.HUMAN,
+        ),
+        PlayerConfig(
+            player_id="p2",
+            display_name="Nova",
+            mode=PlayerMode.POLICY,
+        ),
+    )
+    arena = SimToRealG1RaceArena(mixed_players, grasp_mode="easy")
+    try:
+        assert EASY_GRASP_RADIUS_HUMAN_M == 1.25
+        assert EASY_GRASP_RADIUS_POLICY_M == 1.45
+        assert POLICY_NEAR_OBJECT_RADIUS_M == 0.60
+        assert (
+            EASY_GRASP_RADIUS_POLICY_M - EASY_GRASP_RADIUS_HUMAN_M
+            == pytest.approx(0.20)
+        )
     finally:
         arena.close()
 

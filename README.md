@@ -56,7 +56,8 @@ Open it, click once inside the page, and use:
 - arrow keys — walk while held;
 - Q/E — turn;
 - Space — stop;
-- G — easy grasp when within 1.25 m of the payload;
+- G — easy human grasp when within 1.25 m of the payload (AI receives a small
+  1.45 m capture assist);
 - C — carry pose;
 - R — release near the bucket;
 - U — recovery request;

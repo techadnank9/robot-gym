@@ -146,10 +146,10 @@ reset. Home resets the camera zoom and viewing angle. Some letters are also
 MuJoCo visualization shortcuts; any resulting display-color change does not
 alter the robot physics.
 
-Easy-grasp fairness is symmetric: human and AI players use the same 1.25 m
-capture radius and the same snap-to-hand attachment. AI remains effectively
-harder because its perception and model must decide when to navigate and grasp;
-once `grasp` is selected, the executor is identical.
+Easy grasp gives the AI a small accessibility assist: policy players receive a
+1.45 m capture radius and an earlier 0.60 m `nearObject` decision signal, while
+human players retain the 1.25 m capture radius. Both use the same disclosed
+snap-to-hand attachment once grasp succeeds.
 
 The older `--p1-input keyboard` mode remains available for browser control.
 For that mode, open `http://127.0.0.1:8085/?wsPort=8765` and keep the browser

@@ -35,6 +35,11 @@ from demo_5.model import add_template_73_background
 from demo_5.perception import DelayedCameraPerception
 
 
+EASY_GRASP_RADIUS_HUMAN_M = 1.25
+EASY_GRASP_RADIUS_POLICY_M = 1.45
+POLICY_NEAR_OBJECT_RADIUS_M = 0.60
+
+
 class SimToRealG1RaceArena(DualG1RaceArena):
     """Demo 3 race rules with a deliberately hardware-shaped control boundary."""
 
@@ -220,6 +225,10 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         payload["simToReal"] = {
             "privilegedControl": self.grasp_mode == "easy",
             "graspMode": self.grasp_mode,
+            "easyGraspCaptureRadiusM": {
+                "human": EASY_GRASP_RADIUS_HUMAN_M,
+                "policy": EASY_GRASP_RADIUS_POLICY_M,
+            },
             "graspAttachment": (
                 "kinematic_pose_lock" if self.grasp_mode == "easy" else "none"
             ),
@@ -261,7 +270,8 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             "nearObject": bool(
                 payload is not None
                 and observation.payload.confidence >= 0.2
-                and np.linalg.norm(base[:2] - payload[:2]) < 0.48
+                and np.linalg.norm(base[:2] - payload[:2])
+                < POLICY_NEAR_OBJECT_RADIUS_M
             ),
             "nearGoal": bool(
                 goal is not None
@@ -389,7 +399,10 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                     self.locomotion.set_command(player_id, 0.0, 0.0, 0.28 * direction)
                 else:
                     distance = float(np.linalg.norm(self._odom[player_id][:2] - target[:2]))
-                    if self._grasp_attempts[player_id] > 0 and distance < 0.48:
+                    if (
+                        self._grasp_attempts[player_id] > 0
+                        and distance < POLICY_NEAR_OBJECT_RADIUS_M
+                    ):
                         runtime.status.current_skill = Skill.GRASP
                         runtime.status.rationale = "Recovery controller reacquired the payload."
                         runtime.frame = runtime.frame.model_copy(
@@ -556,7 +569,12 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         payload = self._payload_position(player_id)
         base = self._base_position(player_id)
         distance = float(np.linalg.norm(payload[:2] - base[:2]))
-        if not self._easy_attached[player_id] and distance <= 1.25:
+        capture_radius = (
+            EASY_GRASP_RADIUS_POLICY_M
+            if runtime.config.mode.value == "policy"
+            else EASY_GRASP_RADIUS_HUMAN_M
+        )
+        if not self._easy_attached[player_id] and distance <= capture_radius:
             self._set_easy_attached(player_id, True)
             runtime.had_payload_contact = True
             runtime.status.rationale = (
@@ -566,7 +584,10 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             self._event(
                 "assisted_grasp_attached",
                 player_id=player_id,
-                payload={"captureRadiusM": 1.25, "distanceM": round(distance, 4)},
+                payload={
+                    "captureRadiusM": capture_radius,
+                    "distanceM": round(distance, 4),
+                },
             )
         if self._easy_attached[player_id]:
             self._grasp_confirmed[player_id] = True
@@ -579,7 +600,8 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         else:
             runtime.hand_close = 0.0
             runtime.status.rationale = (
-                f"Move within 1.25 m of the payload to use easy grasp ({distance:.2f} m)."
+                f"Move within {capture_radius:.2f} m of the payload to use easy grasp "
+                f"({distance:.2f} m)."
             )
 
     def _apply_easy_grip(self) -> None:

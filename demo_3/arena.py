@@ -126,9 +126,7 @@ class DualG1RaceArena:
                 show_left_ui=False,
                 show_right_ui=False,
             )
-            self.viewer.cam.distance = 7.2
-            self.viewer.cam.azimuth = 125
-            self.viewer.cam.elevation = -24
+            self.reset_viewer_camera()
             self.viewer.sync()
 
     @property
@@ -152,11 +150,20 @@ class DualG1RaceArena:
         runtime = self.players[frame.player_id]
         if frame.sequence <= runtime.frame.sequence and frame.sequence != 0:
             return
+        if frame.camera_reset:
+            self.reset_viewer_camera()
         runtime.frame = frame
         runtime.last_valid_frame_s = time.monotonic()
         runtime.status.connected = frame.connected
         runtime.status.current_skill = frame.skill
         runtime.hand_close = frame.hand_close
+
+    def reset_viewer_camera(self) -> None:
+        if self.viewer is None:
+            return
+        self.viewer.cam.distance = 7.2
+        self.viewer.cam.azimuth = 125
+        self.viewer.cam.elevation = -24
 
     def set_skill(
         self,

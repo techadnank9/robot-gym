@@ -41,7 +41,7 @@ class SDKCompatibleCommandChannel:
         self.watchdog_s = watchdog_s
         self.transport = transport or DryRunTransport()
         self.transport.initialize()
-        self.limits = np.asarray([0.45, 0.22, 0.80], dtype=np.float32)
+        self.limits = np.asarray([0.52, 0.26, 0.90], dtype=np.float32)
         self.slew_per_packet = np.asarray([0.08, 0.06, 0.16], dtype=np.float32)
         self.desired = np.zeros(3, dtype=np.float32)
         self.active = np.zeros(3, dtype=np.float32)

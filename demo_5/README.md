@@ -121,6 +121,9 @@ scripts/run_g1_demo_5.sh match \
 The left stick or D-pad walks, the right stick turns, and returning the controls
 to center stops. No shoulder-button deadman is required. Face buttons remain
 A/Cross grasp, X/Square carry, B/Circle release, and Y/Triangle recover.
+View/Back resets the MuJoCo camera zoom and angle. The movement ceiling is
+slightly faster than the original Demo 5 profile: 0.52 m/s forward, 0.26 m/s
+lateral, and 0.90 rad/s yaw.
 
 Practice with one human while the second robot remains connected in a neutral
 standing hold:
@@ -139,8 +142,14 @@ With `mujoco-keyboard`, focus the native MuJoCo window and use the arrow keys
 to select a walking direction or Q/E to turn. Native callbacks do not report
 key-up events, so motion remains active until Space is pressed. G performs the
 easy grasp, C carries, R releases, U recovers, and X requests a referee payload
-reset. Some letters are also MuJoCo visualization shortcuts; any resulting
-display-color change does not alter the robot physics.
+reset. Home resets the camera zoom and viewing angle. Some letters are also
+MuJoCo visualization shortcuts; any resulting display-color change does not
+alter the robot physics.
+
+Easy-grasp fairness is symmetric: human and AI players use the same 1.25 m
+capture radius and the same snap-to-hand attachment. AI remains effectively
+harder because its perception and model must decide when to navigate and grasp;
+once `grasp` is selected, the executor is identical.
 
 The older `--p1-input keyboard` mode remains available for browser control.
 For that mode, open `http://127.0.0.1:8085/?wsPort=8765` and keep the browser

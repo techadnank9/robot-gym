@@ -117,9 +117,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 show_left_ui=False,
                 show_right_ui=False,
             )
-            self.viewer.cam.distance = 7.2
-            self.viewer.cam.azimuth = 125
-            self.viewer.cam.elevation = -24
+            self.reset_viewer_camera()
             self.viewer.sync()
         self.domain_parameters = self._randomize_domain()
         self._payload_reset_pose = {
@@ -375,9 +373,9 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 if frame.deadman:
                     self.locomotion.set_command(
                         player_id,
-                        0.45 * frame.move_y,
-                        0.22 * frame.move_x,
-                        0.80 * frame.yaw,
+                        0.52 * frame.move_y,
+                        0.26 * frame.move_x,
+                        0.90 * frame.yaw,
                     )
                 else:
                     self.locomotion.set_command(player_id, 0.0, 0.0, 0.0)
@@ -415,13 +413,13 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         yaw = self._base_yaw(player_id) + float(self.rng.normal(0.0, 0.008))
         desired = math.atan2(float(delta[1]), float(delta[0]))
         error = _wrap_angle(desired - yaw)
-        forward = min(0.36, max(0.0, distance - 0.10)) * max(0.0, math.cos(error))
+        forward = min(0.40, max(0.0, distance - 0.10)) * max(0.0, math.cos(error))
         lateral = float(np.clip(math.sin(error) * min(distance, 0.6), -0.20, 0.20))
         self.locomotion.set_command(
             player_id,
             forward,
             lateral,
-            float(np.clip(1.6 * error, -0.75, 0.75)),
+            float(np.clip(1.6 * error, -0.82, 0.82)),
         )
 
     def _goal_waypoint(self, player_id: str) -> np.ndarray:

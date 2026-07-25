@@ -75,6 +75,15 @@ def test_sdk_channel_clips_slews_delays_and_watchdogs():
     assert channel.transport.commands[-1]["command"] == "stop"
 
 
+def test_demo5_uses_slightly_faster_sdk_velocity_limits():
+    channel = SDKCompatibleCommandChannel(
+        "p1",
+        np.random.default_rng(2),
+        dropout_probability=0.0,
+    )
+    assert np.allclose(channel.limits, [0.52, 0.26, 0.90])
+
+
 def test_hardware_reference_comparison(tmp_path):
     reference = tmp_path / "hardware.json"
     reference.write_text(
@@ -346,6 +355,10 @@ def test_mujoco_keyboard_maps_manipulation_and_reset():
     keyboard.on_key(ord("X"))
     assert keyboard.consume_reset_request()
     assert not keyboard.consume_reset_request()
+
+    keyboard.on_key(keyboard._GLFW_HOME)
+    assert keyboard.consume_camera_reset_request()
+    assert not keyboard.consume_camera_reset_request()
 
 
 def test_disconnect_aborts_instead_of_awarding_incomplete_opponent():

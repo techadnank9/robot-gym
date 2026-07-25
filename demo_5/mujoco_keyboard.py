@@ -20,6 +20,7 @@ class MujocoKeyboard:
     _GLFW_LEFT = 263
     _GLFW_DOWN = 264
     _GLFW_UP = 265
+    _GLFW_HOME = 268
     _MOTION_KEYS = {
         _GLFW_UP: ("move_y", 1.0),
         _GLFW_DOWN: ("move_y", -1.0),
@@ -54,6 +55,7 @@ class MujocoKeyboard:
         self._skill = Skill.WAIT
         self._hand_close = 0.0
         self._reset_requested = False
+        self._camera_reset_requested = False
         self._notice: str | None = None
         self._last_notice: str | None = None
 
@@ -89,6 +91,10 @@ class MujocoKeyboard:
                 self._clear_motion()
                 self._reset_requested = True
                 self._set_notice("payload reset requested")
+                return
+            if keycode == self._GLFW_HOME:
+                self._camera_reset_requested = True
+                self._set_notice("camera reset")
                 return
             skill = self._SKILL_KEYS.get(keycode)
             if skill is not None:
@@ -126,6 +132,12 @@ class MujocoKeyboard:
         with self._lock:
             requested = self._reset_requested
             self._reset_requested = False
+            return requested
+
+    def consume_camera_reset_request(self) -> bool:
+        with self._lock:
+            requested = self._camera_reset_requested
+            self._camera_reset_requested = False
             return requested
 
     def consume_notice(self) -> str | None:

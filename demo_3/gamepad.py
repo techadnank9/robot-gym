@@ -130,6 +130,7 @@ def _gamepad_worker(
             left_trigger = _trigger(joystick, 4)
             right_trigger = _trigger(joystick, 5)
             deadman = _motion_active(left_x, left_y, right_x)
+            camera_reset = _pressed(joystick, 8, previous_buttons)
             if _pressed(joystick, 0, previous_buttons):
                 current_skill = Skill.GRASP
             elif _pressed(joystick, 1, previous_buttons):
@@ -155,6 +156,7 @@ def _gamepad_worker(
                 yaw=right_x,
                 skill=current_skill,
                 hand_close=hand_close,
+                camera_reset=camera_reset,
             )
             _put_latest(frames, frame.model_dump(mode="json"))
             time.sleep(0.02)

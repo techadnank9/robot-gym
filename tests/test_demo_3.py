@@ -52,6 +52,17 @@ def test_local_gamepad_motion_needs_no_shoulder_deadman_and_supports_dpad():
     assert not _motion_active(0.0, 0.0, 0.0)
 
 
+def test_viewer_camera_reset_restores_default_zoom_and_angle():
+    camera = SimpleNamespace(distance=2.0, azimuth=10.0, elevation=5.0)
+    arena = SimpleNamespace(viewer=SimpleNamespace(cam=camera))
+
+    DualG1RaceArena.reset_viewer_camera(arena)
+
+    assert camera.distance == 7.2
+    assert camera.azimuth == 125
+    assert camera.elevation == -24
+
+
 def test_dual_model_is_namespaced_and_dynamic():
     mujoco = pytest.importorskip("mujoco")
     model = mujoco.MjModel.from_xml_string(build_dual_g1_xml(load_scene()))

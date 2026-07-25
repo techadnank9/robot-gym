@@ -160,12 +160,14 @@ function readGamepad(gamepad) {
       player_id: keyboardPlayer,
     }));
   }
+  const cameraReset = pressed(8);
   previousGamepadButtons = buttons;
 
   return {
     moveX: gamepadAxis(gamepad, 0),
     moveY: -gamepadAxis(gamepad, 1),
     yaw: gamepadAxis(gamepad, 2),
+    cameraReset,
   };
 }
 
@@ -175,7 +177,7 @@ function updateInputHelp(gamepad) {
     elements.keyboardPlayer.textContent = `${keyboardPlayer.toUpperCase()} GAMEPAD`;
     if (elements.inputHelp) {
       elements.inputHelp.textContent =
-        "LEFT STICK MOVE · RIGHT STICK TURN · A/✕ GRASP · X/□ CARRY · B/○ RELEASE · Y/△ RECOVER · START RESET";
+        "LEFT STICK MOVE · RIGHT STICK TURN · A/✕ GRASP · X/□ CARRY · B/○ RELEASE · Y/△ RECOVER · BACK CAMERA · START RESET";
     }
     return;
   }
@@ -193,8 +195,9 @@ function sendTeleop() {
   let moveX;
   let moveY;
   let yaw;
+  let cameraReset = false;
   if (gamepad) {
-    ({ moveX, moveY, yaw } = readGamepad(gamepad));
+    ({ moveX, moveY, yaw, cameraReset } = readGamepad(gamepad));
   } else {
     previousGamepadButtons = [];
     moveX = axis("KeyD", "KeyA");
@@ -216,6 +219,7 @@ function sendTeleop() {
       yaw,
       skill: selectedSkill,
       hand_close: handClose,
+      camera_reset: cameraReset,
     },
   }));
 }

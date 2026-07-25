@@ -149,7 +149,8 @@ scripts/run_g1_demo_5.sh match \
 ```
 
 Stick or D-pad movement activates locomotion automatically; no LB hold is
-required.
+required. View/Back resets the native MuJoCo camera, and Home provides the same
+reset for native keyboard control.
 
 ```bash
 scripts/run_g1_demo_5.sh validate

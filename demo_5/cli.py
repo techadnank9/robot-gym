@@ -266,7 +266,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 f"{native_keyboard.player_id.upper()} MuJoCo keyboard: focus the "
                 "MuJoCo window; use arrow keys to walk, Q/E to turn, Space to stop"
             )
-            print("Manipulation: G grasp, C carry, R release, U recover, X reset payload")
+            print(
+                "Manipulation: G grasp, C carry, R release, U recover, "
+                "X reset payload; Home resets camera zoom"
+            )
         if keyboard_players:
             _wait_for_keyboard_ready(
                 arena,
@@ -292,6 +295,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         _restore_broadcast_camera(arena)
                 if native_keyboard.consume_reset_request():
                     arena.request_payload_reset(native_keyboard.player_id)
+                if native_keyboard.consume_camera_reset_request():
+                    arena.reset_viewer_camera()
             for player_id, gamepad in gamepads.items():
                 arena.submit_frame(gamepad.poll())
             _poll_policy_results(arena, slots)
@@ -425,11 +430,7 @@ def _refresh_idle_players(
 def _restore_broadcast_camera(arena: SimToRealG1RaceArena) -> None:
     """Undo MuJoCo's built-in arrow-key camera movement during native teleop."""
 
-    if arena.viewer is None:
-        return
-    arena.viewer.cam.distance = 7.2
-    arena.viewer.cam.azimuth = 125
-    arena.viewer.cam.elevation = -24
+    arena.reset_viewer_camera()
 
 
 def _schedule_demo5_policy_decisions(

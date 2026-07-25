@@ -79,6 +79,10 @@ and sends validated 50 Hz teleoperation frames:
 The first connected browser gamepad is selected automatically. Disconnecting it
 returns control to the keyboard.
 
+For policy players, reaching that bucket radius while carrying a
+checkpoint-verified payload triggers the same assisted release as a grounded
+completion guardrail. It does not consume another model API call.
+
 `play` needs no model key: Player 2 uses the local deterministic policy. For a
 solo practice arena with the other G1 standing idle:
 

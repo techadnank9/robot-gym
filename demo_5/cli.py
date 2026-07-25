@@ -308,6 +308,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             for player_id, gamepad in gamepads.items():
                 arena.submit_frame(gamepad.poll())
             _poll_policy_results(arena, slots)
+            _apply_policy_completion_guardrails(arena, slots)
             _schedule_demo5_policy_decisions(arena, slots, executor)
             arena.step()
             if arena.simulation_time_s - last_publish_s >= 0.2:
@@ -462,6 +463,35 @@ def _print_remote_player_urls(
     print("Two-player browser seats (open one URL on each player's device):")
     for player_id in sorted(player_ids):
         print(f"  {player_id.upper()} {label}: {_player_url(base_url, player_id)}")
+
+
+def _apply_policy_completion_guardrails(
+    arena: SimToRealG1RaceArena,
+    slots: dict[str, PolicySlot],
+) -> None:
+    """Complete an already-grounded delivery even if the model call is delayed."""
+
+    for player_id, slot in slots.items():
+        status = arena.policy_status(player_id)
+        if not (
+            Skill(status["currentSkill"]) == Skill.NAVIGATE_GOAL
+            and status["carrying"]
+            and status["checkpointCrossed"]
+            and status["nearGoal"]
+        ):
+            continue
+        if slot.pending is not None:
+            slot.pending.cancel()
+            slot.pending = None
+        arena.set_skill(
+            player_id,
+            Skill.RELEASE,
+            rationale=(
+                "Grounded completion guardrail: checkpoint crossed and payload "
+                "arrived within the assisted bucket-release radius."
+            ),
+            api_calls_remaining=slot.calls_remaining,
+        )
 
 
 def _schedule_demo5_policy_decisions(

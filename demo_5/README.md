@@ -168,6 +168,12 @@ above the opening, collisions are restored, and MuJoCo gravity drops it into
 the bucket. A release farther away keeps the hand closed and tells the player
 to move closer.
 
+Policy players also have a grounded skill-completion guardrail. If the payload
+is still carried, the checkpoint is confirmed, and the robot reaches the
+0.90 m bucket radius, Demo 5 selects `release` locally without spending another
+model call. This prevents a completed approach from stalling on API latency,
+quota exhaustion, or a repeated `navigate_goal` response.
+
 The older `--p1-input keyboard` mode remains available for browser control.
 For that mode, open `http://127.0.0.1:8085/?wsPort=8765` and keep the browser
 focused. A connected browser gamepad is automatically preferred over keyboard.

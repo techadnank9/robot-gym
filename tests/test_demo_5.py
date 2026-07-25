@@ -109,6 +109,66 @@ def test_runpod_two_player_urls_assign_separate_seats(monkeypatch, capsys):
     assert "https://pod-123-8085.proxy.runpod.net?player=p2" in output
 
 
+def test_policy_arrival_guardrail_releases_without_an_api_call():
+    from demo_3.schemas import Skill
+    from demo_5.cli import _apply_policy_completion_guardrails
+
+    pending = SimpleNamespace(cancel=lambda: True)
+    slot = SimpleNamespace(pending=pending, calls_remaining=0)
+    selected = []
+    arena = SimpleNamespace(
+        policy_status=lambda player_id: {
+            "currentSkill": "navigate_goal",
+            "carrying": True,
+            "checkpointCrossed": True,
+            "nearGoal": True,
+        },
+        set_skill=lambda player_id, skill, **kwargs: selected.append(
+            (player_id, skill, kwargs)
+        ),
+    )
+
+    _apply_policy_completion_guardrails(arena, {"p2": slot})
+
+    assert slot.pending is None
+    assert selected[0][0] == "p2"
+    assert selected[0][1] == Skill.RELEASE
+    assert selected[0][2]["api_calls_remaining"] == 0
+    assert "Grounded completion guardrail" in selected[0][2]["rationale"]
+
+
+def test_policy_arrival_guardrail_requires_checkpoint_and_payload():
+    from demo_5.cli import _apply_policy_completion_guardrails
+
+    selected = []
+    statuses = [
+        {
+            "currentSkill": "navigate_goal",
+            "carrying": True,
+            "checkpointCrossed": False,
+            "nearGoal": True,
+        },
+        {
+            "currentSkill": "navigate_goal",
+            "carrying": False,
+            "checkpointCrossed": True,
+            "nearGoal": True,
+        },
+    ]
+    arena = SimpleNamespace(
+        policy_status=lambda player_id: statuses.pop(0),
+        set_skill=lambda *args, **kwargs: selected.append((args, kwargs)),
+    )
+    slots = {
+        player_id: SimpleNamespace(pending=None, calls_remaining=2)
+        for player_id in ("p1", "p2")
+    }
+
+    _apply_policy_completion_guardrails(arena, slots)
+
+    assert selected == []
+
+
 def test_sdk_channel_clips_slews_delays_and_watchdogs():
     channel = SDKCompatibleCommandChannel(
         "p1",

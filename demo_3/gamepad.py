@@ -122,9 +122,14 @@ def _gamepad_worker(
             left_x = _axis(joystick, 0)
             left_y = -_axis(joystick, 1)
             right_x = _axis(joystick, 2)
+            hat_x, hat_y = _hat(joystick)
+            if left_x == 0.0:
+                left_x = hat_x
+            if left_y == 0.0:
+                left_y = hat_y
             left_trigger = _trigger(joystick, 4)
             right_trigger = _trigger(joystick, 5)
-            deadman = _button(joystick, 4)
+            deadman = _motion_active(left_x, left_y, right_x)
             if _pressed(joystick, 0, previous_buttons):
                 current_skill = Skill.GRASP
             elif _pressed(joystick, 1, previous_buttons):
@@ -192,6 +197,17 @@ def _axis(joystick: Any, index: int) -> float:
 
 def _trigger(joystick: Any, index: int) -> float:
     return max(0.0, min(1.0, (_axis(joystick, index) + 1.0) / 2.0))
+
+
+def _hat(joystick: Any) -> tuple[float, float]:
+    if joystick.get_numhats() <= 0:
+        return 0.0, 0.0
+    x, y = joystick.get_hat(0)
+    return float(x), float(y)
+
+
+def _motion_active(move_x: float, move_y: float, yaw: float) -> bool:
+    return bool(move_x or move_y or yaw)
 
 
 def _button(joystick: Any, index: int) -> bool:

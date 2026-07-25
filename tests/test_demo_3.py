@@ -39,6 +39,19 @@ def test_player_modes_and_teleop_bounds():
         )
 
 
+def test_local_gamepad_motion_needs_no_shoulder_deadman_and_supports_dpad():
+    from demo_3.gamepad import _hat, _motion_active
+
+    joystick = SimpleNamespace(
+        get_numhats=lambda: 1,
+        get_hat=lambda index: (-1, 1) if index == 0 else (0, 0),
+    )
+    assert _hat(joystick) == (-1.0, 1.0)
+    assert _motion_active(0.0, 1.0, 0.0)
+    assert _motion_active(0.0, 0.0, -0.25)
+    assert not _motion_active(0.0, 0.0, 0.0)
+
+
 def test_dual_model_is_namespaced_and_dynamic():
     mujoco = pytest.importorskip("mujoco")
     model = mujoco.MjModel.from_xml_string(build_dual_g1_xml(load_scene()))

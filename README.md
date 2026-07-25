@@ -140,6 +140,17 @@ transport contract, command latency/dropout/watchdogs, sensor and actuator
 uncertainty, seeded domain randomization, recovery, and hardware-log divergence
 evidence. Assisted grasp runs are labeled as privileged in state and evidence.
 
+For local macOS joystick practice:
+
+```bash
+scripts/run_g1_demo_5.sh match \
+  --p1 human --p1-input gamepad --p1-gamepad 0 \
+  --p2 human --p2-input idle
+```
+
+Stick or D-pad movement activates locomotion automatically; no LB hold is
+required.
+
 ```bash
 scripts/run_g1_demo_5.sh validate
 scripts/run_g1_demo_5.sh scripted

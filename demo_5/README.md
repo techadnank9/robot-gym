@@ -110,6 +110,18 @@ scripts/run_g1_demo_5.sh match \
   --p2 policy
 ```
 
+Run a local joystick player against an idle G1:
+
+```bash
+scripts/run_g1_demo_5.sh match \
+  --p1 human --p1-input gamepad --p1-gamepad 0 \
+  --p2 human --p2-input idle
+```
+
+The left stick or D-pad walks, the right stick turns, and returning the controls
+to center stops. No shoulder-button deadman is required. Face buttons remain
+A/Cross grasp, X/Square carry, B/Circle release, and Y/Triangle recover.
+
 Practice with one human while the second robot remains connected in a neutral
 standing hold:
 

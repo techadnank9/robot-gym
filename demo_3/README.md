@@ -88,10 +88,11 @@ scripts/run_g1_demo_3.sh match \
   --p2 policy
 ```
 
-For a gamepad, hold the left shoulder button as the deadman. The left stick
-commands planar velocity, the right stick commands yaw, and the face buttons
-select grasp, release, carry, and recovery skills. Triggers open and close the
-hand.
+For a gamepad, moving either stick automatically enables locomotion; no shoulder
+button is required. The left stick commands planar velocity, the right stick
+commands yaw, and the D-pad is a full-speed walking fallback. Returning the
+sticks and D-pad to center commands a stop. The face buttons select grasp,
+release, carry, and recovery skills. Triggers open and close the hand.
 
 Connect and wake the controller before launching. Gamepad SDL polling runs in a
 separate helper process so it cannot conflict with MuJoCo's macOS Cocoa viewer.

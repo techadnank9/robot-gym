@@ -1,36 +1,225 @@
-# Robot Gym — VLGE Unitree G1 Race
+# Robot Gym
 
-Real Isaac Lab / Isaac Sim Unitree path simulation with VLA planning and live remote viewing.
+<p align="center">
+  <strong>The competitive arena for embodied AI.</strong>
+</p>
 
-## RunPod: playable in two commands
+<p align="center">
+  Put humanoid robot policies—and human pilots—inside the same physical task.<br />
+  Race them live. Measure every decision. Turn failures into evaluation data.
+</p>
 
-Demo 5 runs as a browser-playable, two-G1 MuJoCo race on Linux. The browser
-shows the VLGE-styled match view and sends keyboard controls; MuJoCo and the
-official Unitree locomotion policy run headlessly on the Pod.
+<p align="center">
+  <a href="https://gx5ye22m6jinyh-8085.proxy.runpod.net">
+    <img alt="Play Robot Gym" src="https://img.shields.io/badge/PLAY_LIVE-OPEN_ARENA-4A9CFF?style=for-the-badge" />
+  </a>
+  <a href="#run-it-yourself">
+    <img alt="Run it yourself" src="https://img.shields.io/badge/RUN_IT-YOURSELF-111827?style=for-the-badge" />
+  </a>
+  <a href="#architecture">
+    <img alt="Architecture" src="https://img.shields.io/badge/VIEW-ARCHITECTURE-FF4B38?style=for-the-badge" />
+  </a>
+</p>
 
-### 1. Create the Pod
+<p align="center">
+  <a href="https://gx5ye22m6jinyh-8085.proxy.runpod.net">
+    <img
+      src="demo_5/web/arena-poster.jpg"
+      width="920"
+      alt="Two Unitree G1 humanoid robots competing in the Robot Gym delivery arena"
+    />
+  </a>
+</p>
 
-Use a RunPod GPU Pod with at least 64 GB system RAM. The current official
-RunPod documentation uses this PyTorch image:
+<p align="center">
+  <a href="https://gx5ye22m6jinyh-8085.proxy.runpod.net"><strong>Launch the live arena →</strong></a>
+</p>
 
-```text
-runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404
+## What is Robot Gym?
+
+Robot Gym is a live evaluation platform for physical intelligence.
+
+Two simulated [Unitree G1](https://www.unitree.com/g1/) humanoids enter the
+same shared world. Each must perceive a payload, navigate to it, grasp it,
+cross the arena, and deliver it into a physical bucket. The first verified
+delivery wins.
+
+Choose who controls each robot:
+
+| Match | What it tests |
+|---|---|
+| **AI vs AI** | Compare models under identical embodiment and physics |
+| **Human vs AI** | Benchmark autonomy against an intuitive human baseline |
+| **Human vs Human** | Test the task, controls, environment, and competitive format |
+
+The match is the interface. The real product is the evidence generated beneath
+it: camera observations, model decisions, commands, trajectories, failures,
+recoveries, and verified outcomes.
+
+> **Why competition?** A race makes robotic capability understandable at a
+> glance while forcing policies to perform closed-loop, under uncertainty,
+> without hiding retries behind a polished demo reel.
+
+## Try it now
+
+### [Open the live Robot Gym arena](https://gx5ye22m6jinyh-8085.proxy.runpod.net)
+
+No installation is required to view or play a hosted match.
+
+1. Choose **AI vs AI**, **AI vs Human**, or **Human vs Human**.
+2. For an AI seat, optionally provide a temporary Gemini API key.
+3. For a human seat, click the arena and use a keyboard or connected gamepad.
+4. Deliver the payload into your bucket before the opponent.
+5. Inspect the result and rematch.
+
+The temporary API-key field is memory-only: the key is sent once to the match
+process, cleared from the UI, and excluded from URLs, browser storage, evidence,
+and repository files.
+
+### Controls
+
+| Action | Keyboard | Gamepad |
+|---|---|---|
+| Move | Arrow keys | Left stick or D-pad |
+| Turn | `Q` / `E` | Right stick |
+| Stop | `Space` | Center sticks |
+| Grasp | `G` | A / Cross |
+| Carry | `C` | X / Square |
+| Release | `R` | B / Circle |
+| Recover | `U` | Y / Triangle |
+| Reset payload | `X` | Start / Options |
+| Reset camera | `Home` | View / Back |
+
+## Why it is different
+
+Most robotics simulators answer: *can the controller move the robot?*
+
+Robot Gym asks a harder, product-level question: *can this intelligence finish
+the task reliably, faster than another intelligence, using only the information
+and actions it would actually receive?*
+
+- **Model-neutral competition** — Gemini Robotics-ER, deterministic baselines,
+  custom HTTP policies, or human operators.
+- **Shared physical world** — two articulated G1 humanoids, payloads, obstacles,
+  checkpoints, and collision-enabled buckets in one MuJoCo simulation.
+- **Camera-grounded decisions** — delayed RGB-D-derived estimates with misses,
+  noise, confidence, and map fallback.
+- **Hardware-shaped execution** — a 50 Hz SDK-style velocity channel with
+  clipping, slew limits, latency, dropout, and watchdog stops.
+- **Official locomotion policy** — the pinned Unitree G1 policy produces leg
+  actions; language and vision models select grounded task-level skills.
+- **Failure-aware manipulation** — grasp, carry, release, payload recovery,
+  contact loss, and reset penalties are explicit match events.
+- **Evidence, not anecdotes** — every run writes state, trajectory, event,
+  perception, command-channel, and outcome artifacts.
+- **Playable anywhere** — native MuJoCo on macOS or a headless GPU host with
+  browser spectators, keyboards, and locally connected gamepads.
+
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph Players["Players and policies"]
+        H["Human pilot<br/>keyboard · gamepad"]
+        G["Gemini Robotics-ER"]
+        C["Custom model<br/>HTTP adapter"]
+        S["Deterministic baseline"]
+    end
+
+    subgraph Experience["VLGE world and live match experience"]
+        UI["Browser arena<br/>lobby · seats · telemetry · rematch"]
+        WS["Match gateway<br/>HTTP + WebSocket"]
+        WORLD["Shared scenario<br/>task · rules · collisions · scoring"]
+    end
+
+    subgraph Intelligence["Embodied intelligence loop"]
+        OBS["Camera-grounded perception<br/>RGB-D · latency · noise · misses"]
+        ADAPT["Policy adapters<br/>model-neutral decision contract"]
+        SKILLS["Guarded skills<br/>navigate · grasp · carry · release · recover"]
+    end
+
+    subgraph Control["Robot execution"]
+        SDK["SDK-shaped command channel · 50 Hz<br/>limits · slew · dropout · watchdog"]
+        LOCO["Pinned Unitree G1 locomotion policy"]
+        SIM["Dual-G1 MuJoCo physics · 500 Hz<br/>joints · contacts · payloads · buckets"]
+    end
+
+    subgraph Evidence["Evaluation evidence"]
+        TRACE["Observations · rationales · skills · commands"]
+        RESULT["Trajectories · events · recovery · verified outcome"]
+        HW["Optional hardware-reference comparison"]
+    end
+
+    H --> WS
+    G --> ADAPT
+    C --> ADAPT
+    S --> ADAPT
+    UI <--> WS
+    WS --> SKILLS
+    WORLD <--> SIM
+    SIM --> OBS
+    OBS --> ADAPT
+    ADAPT --> SKILLS
+    SKILLS --> SDK
+    SDK --> LOCO
+    LOCO --> SIM
+    OBS --> TRACE
+    ADAPT --> TRACE
+    SDK --> TRACE
+    SIM --> RESULT
+    TRACE --> RESULT
+    HW -. compare .-> RESULT
+    RESULT --> UI
 ```
 
-Recommended Pod settings:
+### The key boundary
 
-- container disk: 40 GB or more;
-- persistent volume: 20 GB or more, mounted at `/workspace`;
-- expose HTTP ports: `8085,8765`;
-- start with the web terminal or SSH.
+Foundation models do **not** directly command joint torques. They choose
+grounded intent through a compact skill contract. Guardrails, the command
+channel, the Unitree locomotion policy, and MuJoCo own executable motion.
 
-Both ports must be exposed as **HTTP ports**. Port 8085 serves the match page;
-8765 carries its WebSocket telemetry and controls. RunPod publishes them as
-`https://POD_ID-PORT.proxy.runpod.net`.
+This separation makes cross-model comparisons meaningful and keeps a path open
+for real SDK integration without presenting simulation as hardware
+certification.
 
-### 2. Install and play
+### Runtime sequence
 
-Run these commands in the Pod terminal:
+```text
+camera frame
+  → delayed/noisy grounded observation
+  → model or human decision
+  → guarded task skill
+  → bounded SDK-style velocity command
+  → Unitree locomotion policy
+  → MuJoCo physics and contact
+  → scoring + evidence + live browser telemetry
+```
+
+## What a match produces
+
+Each run can emit:
+
+```text
+outputs/<match>/
+├── result.json
+├── match_state.json
+├── events.json
+├── trajectory.json
+├── sim_to_real_report.json
+├── scene.xml
+├── p1_sdk_command_trace.json
+└── p2_sdk_command_trace.json
+```
+
+The public match state intentionally removes privileged ground-truth poses.
+Evaluation-only diagnostics remain labeled separately.
+
+## Run it yourself
+
+### RunPod — fastest hosted setup
+
+Use a GPU Pod with at least 64 GB system RAM, 40 GB container storage, and
+HTTP ports `8085` and `8765` exposed.
 
 ```bash
 cd /workspace
@@ -40,157 +229,24 @@ bash scripts/setup_runpod.sh
 scripts/run_g1_demo_5_runpod.sh lobby
 ```
 
-The setup script creates an isolated environment, installs the Linux/EGL
-runtime, downloads hash-checked pinned G1 assets and the official Unitree
-locomotion policy, and renders a validation frame before reporting success.
+Open the printed `https://<POD_ID>-8085.proxy.runpod.net` URL. Gamepads remain
+connected to each player's browser; USB passthrough to the Pod is unnecessary.
 
-The launcher prints the public URL. It has this form:
+The setup script creates an isolated Python environment, installs the EGL
+runtime, downloads hash-checked robot assets and the pinned locomotion policy,
+then renders a validation frame.
 
-```text
-https://YOUR_POD_ID-8085.proxy.runpod.net
-```
-
-Open it and choose AI vs AI, AI vs Human, or Human vs Human. The launcher stays
-online between matches, starts the selected MuJoCo process, and exposes Rematch
-after a winner is verified. AI seats use Gemini when their key is configured
-and fall back to the deterministic validation policy when no key is present.
-
-You can also paste a Gemini API key into the optional landing-page field. It is
-sent in the HTTPS match-start request body, injected only into that child match,
-and never written to the repository, output evidence, launcher state, URL,
-`localStorage`, or `sessionStorage`. The input is cleared immediately after
-launch. Enter it again for an AI rematch; leaving it blank uses the Pod's
-configured adapter or scripted fallback. Do not enter a key through a plain
-remote HTTP URL.
-
-For a human seat, click once inside the live arena and use:
-
-- connected gamepad — automatically preferred over keyboard;
-- arrow keys — walk while held;
-- Q/E — turn;
-- Space — stop;
-- G — easy human grasp when within 1.25 m of the payload (AI receives a small
-  1.45 m capture assist);
-- C — carry pose;
-- R — release near the bucket;
-- U — recovery request;
-- X — request a payload reset.
-
-For joystick play, connect the controller to the computer running your browser,
-open the match URL, then press any controller button once so the browser exposes
-it. No controller is attached to the remote Pod. The browser reads it locally
-and sends validated 50 Hz teleoperation frames:
-
-- left stick — forward/back and lateral movement;
-- right stick — turn;
-- A / Cross — easy grasp;
-- X / Square — carry;
-- B / Circle — assisted release when within 0.90 m of the correct bucket;
-- Y / Triangle — recover;
-- Start / Options — payload reset.
-
-The first connected browser gamepad is selected automatically. Disconnecting it
-returns control to the keyboard.
-
-For policy players, reaching that bucket radius while carrying a
-checkpoint-verified payload triggers the same assisted release as a grounded
-completion guardrail. It does not consume another model API call.
-
-The three direct launch modes remain available for testing. `play` needs no
-model key: Player 2 uses the local deterministic policy. For a solo practice
-arena with the other G1 standing idle:
+### macOS — native MuJoCo viewer
 
 ```bash
-scripts/run_g1_demo_5_runpod.sh practice
-```
+make mac-setup
 
-For Human vs Human, the landing page displays separate P1 and P2 links after
-selection. Send P2 their link, then enter as P1. The query parameter assigns
-each browser to its robot while both remain in the same match. Each player can
-use a locally connected joystick through the browser Gamepad API, with no USB
-passthrough to the Pod. The match waits up to five minutes for both seats.
-
-For Gemini Robotics-ER as Player 2:
-
-```bash
-export DEMO3_P2_GEMINI_API_KEY="<restricted Gemini key>"
-scripts/run_g1_demo_5_runpod.sh gemini
-```
-
-Validate again without opening a match:
-
-```bash
-scripts/run_g1_demo_5_runpod.sh validate
-```
-
-The RunPod HTTP proxy is public. Keep API keys only in environment variables,
-never in the URL or repository. Stop the Pod when finished to stop billing.
-RunPod's official port guide is
-[here](https://docs.runpod.io/pods/configuration/expose-ports).
-
-### Optional custom RunPod image
-
-The repository also includes a ready-to-build image:
-
-```bash
-docker build -f docker/Dockerfile.runpod -t robot-gym:runpod .
-```
-
-Use `docker/Dockerfile.runpod` in a custom RunPod template, expose
-`8085/http` and `8765/http`, and leave its default command unchanged. It starts
-the playable human-versus-scripted match automatically.
-
-### RunPod troubleshooting
-
-- Page opens but says reconnecting: expose `8765` as an HTTP port too.
-- No movement: click the browser page, tap an arrow, and press Space before
-  changing directions.
-- Gamepad not detected: use current Chrome, Edge, or Safari over the RunPod
-  HTTPS URL, reconnect the controller, and press one of its buttons once.
-- EGL initialization fails: use a RunPod NVIDIA/PyTorch Pod and rerun
-  `bash scripts/setup_runpod.sh`.
-- First start takes several minutes: PyTorch, MuJoCo assets, textures, and the
-  pinned policy are installed once into the persistent `/workspace` volume.
-
-## Demo 5: G1 race
-
-Demo 5 keeps the VLGE 1v1 task and a hardware-shaped 50 Hz SDK command channel.
-Locomotion uses the pinned official Unitree G1 policy. The default `easy` grasp
-is intentionally game-like: it uses a disclosed snap-to-hand attachment so the
-race is fun and reliable. Pass `--grasp-mode mechanical` when you specifically
-want contact-only manipulation evidence.
-
-The constrained stack still includes camera-derived RGB-D estimates, the SDK2
-transport contract, command latency/dropout/watchdogs, sensor and actuator
-uncertainty, seeded domain randomization, recovery, and hardware-log divergence
-evidence. Assisted grasp runs are labeled as privileged in state and evidence.
-
-For local macOS joystick practice:
-
-```bash
 scripts/run_g1_demo_5.sh match \
   --p1 human --p1-input gamepad --p1-gamepad 0 \
   --p2 human --p2-input idle
 ```
 
-Stick or D-pad movement activates locomotion automatically; no LB hold is
-required. View/Back resets the native MuJoCo camera, and Home provides the same
-reset for native keyboard control.
-
-```bash
-scripts/run_g1_demo_5.sh validate
-scripts/run_g1_demo_5.sh scripted
-```
-
-See `demo_5/README.md` for keyboard/model matches and hardware replay format.
-
-## Demo 6: 3× directional-speed race
-
-Demo 6 keeps the complete Demo 5 arena and control stack but triples
-forward/backward and left/right command speed for both human and AI players.
-Yaw stays unchanged for controllability. Demo 5 remains at its original speed.
-
-For an idle P1 versus a locally connected P2 gamepad:
+For the faster arcade locomotion profile:
 
 ```bash
 scripts/run_g1_demo_6.sh match \
@@ -198,597 +254,117 @@ scripts/run_g1_demo_6.sh match \
   --p2 human --p2-input gamepad --p2-gamepad 0
 ```
 
-The Demo 6 ceilings are 1.56 m/s forward/backward and 0.78 m/s lateral.
-This is an arcade simulation profile, not a claim that a real G1 can safely
-run the same out-of-distribution commands. See `demo_6/README.md`.
+The arcade profile triples planar command ceilings for gameplay. It is
+explicitly labeled simulation-only and is not evidence of a safe real-G1
+operating envelope.
 
-## Georeferenced San Francisco MuJoCo Scene
-
-The native MuJoCo path can generate a local San Francisco scene from live
-OpenStreetMap and USGS elevation data. The default Golden Gate Bridge scene:
-
-- downloads and caches a small OSM bounding box;
-- converts WGS84 latitude/longitude to local east/north/up meters;
-- turns roads and footways into MuJoCo geometry and extrudes building footprints;
-- samples a cacheable USGS elevation grid and writes a MuJoCo heightfield; and
-- places the Menagerie Unitree G1 at a geographic pose and heading.
-
-The landmark renderer adds geometry that OSM does not contain: accurately
-aligned towers, the suspended deck, main cables, vertical hangers, under-deck
-trusses, six marked traffic lanes, two sidewalks, guardrails, and bay water. It
-uses generated asphalt, concrete, painted-steel, and water textures plus a
-cinematic bridge camera. This is a detailed MuJoCo digital twin, not scanned
-photogrammetry; true film-level photorealism requires a licensed high-resolution
-mesh and PBR texture set that is not present in OSM.
-
-Set up the existing Mac runtime, build the scene once, and launch it:
+### Validate without playing
 
 ```bash
-make mac-setup
-make mac-osm-build
-make mac-osm
+scripts/run_g1_demo_5.sh validate
+scripts/run_g1_demo_6.sh validate
 ```
 
-The first build needs network access. It writes `map.osm`, `elevation.json`,
-`elevation.png`, `scene.xml`, and `scene_metadata.json` under
-`outputs/mujoco_sf_golden_gate_bridge/`; later builds use those caches. To explicitly
-test without elevation downloads, pass `--flat-elevation`. To fetch current OSM
-data again, pass `--refresh-osm`:
+### Run the test suite
 
 ```bash
-.venv-mac/bin/python -m pathvla.osm_mujoco --build-only --refresh-osm
-.venv-mac/bin/python -m pathvla.osm_mujoco --build-only --flat-elevation
+python3 -m pytest tests -m "not integration"
 ```
 
-Edit `config/osm_sf_golden_gate_bridge.yaml` to adjust the bridge crop and robot
-latitude/longitude. Generated data retains OpenStreetMap attribution and a
-source record in `scene_metadata.json`. OSM is a static map, not a live safety
-system: it does not replace perception, localization, curb/stair modeling, or a
-real locomotion controller. Multipolygon outer rings are supported; inner-ring
-courtyards are currently filled as solid building geometry.
+## Bring your own model
 
-The Salesforce Park preset models the park on the level-3 roof of the Transit
-Center rather than at street level. It also enables the semantic palette:
-asphalt is dark gray, paving and sidewalks are warm stone, parks/grass/gardens
-use distinct greens, water is blue, playgrounds are orange, and tagged building
-colors/materials are retained (including the glass Salesforce Tower).
+Robot Gym exposes a small policy decision surface rather than coupling the
+arena to one provider.
+
+Built-in adapters:
+
+- `gemini-er` — Gemini Robotics-ER;
+- `scripted` — deterministic local validation policy;
+- `http` — custom remote model endpoint.
 
 ```bash
-make mac-salesforce-park-build
-make mac-salesforce-park
+scripts/run_g1_demo_5.sh match \
+  --p1 policy --p1-adapter http --p1-endpoint http://127.0.0.1:9001/decide \
+  --p2 policy --p2-adapter gemini-er
 ```
 
-Its cached output is written to `outputs/mujoco_sf_salesforce_park/`. Geographic
-and roof-height settings live in `config/osm_sf_salesforce_park.yaml`.
+A policy selects grounded skills such as `navigate_object`, `grasp`,
+`navigate_goal`, `release`, `recover`, and `wait`. The arena validates the
+decision against the current physical state before execution.
 
-## Native Apple Silicon Mac Demo
+## Sim-to-real stance
 
-The sorting demo now runs natively on macOS with MuJoCo. It does not use Docker,
-CUDA, Isaac, or an NVIDIA GPU. The Mac path uses Google DeepMind MuJoCo
-Menagerie's G1-with-hands MJCF because MuJoCo does not load USD directly.
+Robot Gym models several real control constraints, but a successful simulated
+match is **not** proof of safe deployment on a physical G1.
 
-The runtime has already been validated on Apple Silicon with MuJoCo 3.10.0:
+The current evaluation boundary includes:
 
-- G1 model compiled with 50 configuration coordinates and 43 actuators
-- indoor sorting lab compiled with 54 bodies
-- oblique and overhead cameras rendered successfully
-- the complete 17-action articulated-hand sorting execution passed locally
+- the same `set_velocity(vx, vy, yaw_rate, duration)` transport contract used by
+  the SDK-facing layer;
+- command rate, latency, dropout, clipping, slew, and watchdog behavior;
+- camera and joint noise, actuator-strength variation, friction randomization,
+  and perception misses;
+- optional comparison against recorded G1 SDK telemetry.
 
-Set up once:
+Assisted grasp modes are deliberately disclosed as privileged gameplay
+features. Use contact-only manipulation when evaluating mechanical grasp
+claims.
 
-```bash
-cd pathvla-unitree-isaac-live
-make mac-setup
-```
-
-Run the full Gemini-controlled interactive demo:
-
-```bash
-export GEMINI_API_KEY="<restricted Gemini API key>"
-make mac-demo
-```
-
-The interactive viewer is launched with MuJoCo's required `mjpython` macOS
-launcher. Gemini receives both rendered camera images on every action turn.
-There is no rule-planning fallback.
-
-The Mac executor uses the G1's seven right-arm/wrist joints and seven right-hand
-finger joints. For each pickup it moves into a manipulation stance, reaches to
-the object with damped-least-squares IK, closes the thumb/index/middle fingers,
-attaches the carried item to the wrist grasp site, lifts it, and releases it over
-the selected bucket. This is an articulated simulation skill rather than a
-learned low-level grasp policy.
-
-The MuJoCo window also includes an agent panel with Gemini's selected action,
-target, concise rationale, expected outcome, execution status, and recent
-completed actions. These are inspectable decision summaries returned by the
-model—not private hidden chain-of-thought. The same summaries are printed in the
-terminal and saved in `gemini_action_plan.json`.
-
-The agent spaces requests 13 seconds apart by default, keeping it below the
-Robotics-ER free-tier limit of five requests per minute. HTTP 429 responses are
-retried using Google's returned delay while the MuJoCo viewer remains responsive.
-Override only when your paid quota permits it:
-
-```bash
-export GEMINI_MIN_REQUEST_INTERVAL_S=13
-export GEMINI_RATE_LIMIT_RETRIES=3
-```
-
-To verify the simulator and cameras without making an API request:
-
-```bash
-make mac-smoke
-```
-
-Mac-specific files:
-
-- `pathvla/mujoco_sorting_demo.py` — native agent loop
-- `pathvla/mujoco_lab.py` — generated lab, renderer, and task skills
-- `requirements-mac.txt` — isolated native dependencies
-- `scripts/run_mac_demo.sh` — `mjpython` GUI launcher
-- `assets/mujoco_g1.lock.json` — pinned Menagerie revision
-
-## Replit Mac Worker Integration
-
-The native Mac simulator can connect outward to a Replit control application by
-authenticated WebSocket. Replit does not need inbound access to the Mac, and the
-Gemini API key never leaves the Mac process.
-
-Install the updated Mac dependencies once:
-
-```bash
-make mac-setup
-```
-
-Set the deployed Replit worker endpoint and the same worker token configured in
-Replit Secrets:
-
-```bash
-export GEMINI_API_KEY="<restricted Gemini API key>"
-export REPLIT_CONTROL_URL="wss://YOUR-APP.replit.app/ws/v1/worker"
-export REPLIT_WORKER_TOKEN="<shared worker token>"
-```
-
-To mirror a normal local demo to the Replit dashboard:
-
-```bash
-export REPLIT_ENABLED=1
-make mac-demo
-```
-
-To leave the Mac online and execute tasks submitted by the Replit dashboard:
-
-```bash
-make replit-worker
-```
-
-The worker accepts only `task_command` messages with a non-empty `instruction`
-and this optional allowlist: `maxActions`, `maxRejections`, `thinkingBudget`,
-`recordVideo`, `headless`, and `lingerSeconds`. It does not accept commands,
-paths, model names, environment variables, or shell arguments from Replit.
-
-The worker streams real compressed camera frames plus versioned events for run
-startup, scene observation, Gemini waits/decisions, action execution/rejection,
-completion, failure, and cooperative stopping. Decision payloads contain the
-model's concise rationale and expected outcome, never hidden chain-of-thought.
-Frames are deduplicated and evicted before control events when the bounded
-outgoing queue is full. A dashboard stop is acknowledged between actions (or
-during a Gemini quota wait), preserving a partial trace and final typed state.
-
-The Replit service should send messages shaped like:
-
-```json
-{
-  "type": "task_command",
-  "taskId": "task-123",
-  "runId": "run-123",
-  "instruction": "Sort every red item into the red bucket.",
-  "options": {"recordVideo": true}
-}
-```
-
-To request a safe stop:
-
-```json
-{"type": "stop_requested", "runId": "run-123"}
-```
-
-Run the focused integration tests with `make replit-test`. The transport client
-is in `pathvla/replit_worker.py`; the long-running Mac entry point is
-`pathvla/replit_mac_worker.py`.
-
-## Gemini Robotics-ER G1 Sorting Demo
-
-The featured demo is a closed-loop embodied-reasoning task in an indoor lab:
+## Project map
 
 ```text
-Sort every red item into the red bucket and every blue item into the blue bucket.
+demo_3/        competitive dual-G1 arena, policies, browser client
+demo_5/        perception, constrained command channel, evidence, hosted lobby
+demo_6/        optional 3× planar-speed gameplay profile
+demo_2/        SDK2 transport and real-G1 boundary experiments
+pathvla/       VLA, MuJoCo sorting, OSM world generation, remote worker
+isaac_ext/     Isaac Lab / Isaac Sim extension
+scripts/       setup, launch, conversion, validation, and deployment tools
+tests/         arena, policy, controls, recovery, deployment, and evidence tests
+docker/        local and RunPod container definitions
 ```
 
-It uses:
+## Roadmap
 
-- Google's current `gemini-robotics-er-1.6-preview` model for visual reasoning and online action selection
-- the official Unitree G1 29-DoF USD from `unitreerobotics/unitree_model`
-- two rendered Isaac camera views on every model turn
-- a constrained action vocabulary: `navigate`, `pick`, `place`, and `finish`
-- precondition, object-ID, proximity, color-match, and geometric completion checks
-- an indoor room with a sorting table, four items, two open-top buckets, and an obstacle
+- [x] AI vs AI, human vs AI, and two-human live matches
+- [x] Browser keyboard and gamepad control
+- [x] Gemini, scripted, and custom HTTP policy adapters
+- [x] Camera-grounded observations and hardware-shaped command transport
+- [x] Evidence packages, recovery, rematch, and RunPod deployment
+- [ ] Public benchmark seasons and verified leaderboards
+- [ ] User-authored VLGE scenarios and task packs
+- [ ] Additional humanoid embodiments and policy runtimes
+- [ ] Hardware-partner validation on physical G1 units
 
-There is no Gemini planner fallback and no proxy robot on this path. A missing
-key, inaccessible model, missing USD, absent camera frame, or invalid action
-causes an explicit failure. Rejected unsafe actions can be returned to Gemini
-for correction, but are never silently replaced by rules.
+## Investor brief
 
-### Architecture
+An editable investor deck and presenter notes are available in
+[`docs/investor/`](docs/investor/).
 
-```text
-Isaac cameras + typed world state + task
-                    |
-                    v
-       Gemini Robotics-ER 1.6
-         one grounded action
-                    |
-                    v
-          strict safety gate
-                    |
-                    v
- G1 navigation / pick / place simulator skills
-                    |
-                    v
-       new rendered observation
-```
+## Contributing
 
-Gemini Robotics-ER is the high-level embodied reasoning model, not a low-level
-joint policy. The executors use bounded task-space simulation skills: A* root
-navigation around obstacles plus grasp, carry, and release. The native Mac path
-articulates the G1 arm, wrist, and fingers with task-space IK; the Isaac path
-drives the real G1 USD on an Isaac stage. Neither is a learned locomotion/grasp
-policy or a real-robot deployment.
+Issues, benchmark ideas, model adapters, control improvements, and new
+scenarios are welcome.
 
-### Run It
+1. Fork the repository.
+2. Create a focused branch.
+3. Add or update tests for behavioral changes.
+4. Open a pull request with the scenario, expected result, and evidence.
 
-The Isaac version requires Ubuntu, an NVIDIA GPU, a compatible Isaac Sim/Isaac
-Lab container, and a restricted Gemini API key. Use the native Mac workflow
-above on macOS. Robotics-ER returns HTTP 403 for unrestricted keys, so configure
-API restrictions in Google AI Studio first.
+If Robot Gym is useful to your work, **star the repository**, try the
+[live arena](https://gx5ye22m6jinyh-8085.proxy.runpod.net), and share a match
+result.
 
-```bash
-cd pathvla-unitree-isaac-live
-cp .env.example .env
+## Built with
 
-export ISAAC_BASE_IMAGE="<compatible Isaac Sim/Lab image>"
-export HOST_WORKSPACE_ROOT="$PWD"
-export BREV_PUBLIC_HOST="<GPU VM hostname>"
-export GEMINI_API_KEY="<restricted Gemini API key>"
+[MuJoCo](https://mujoco.org/) ·
+[Unitree G1](https://www.unitree.com/g1/) ·
+[VLGE](https://vlge.com/ai) ·
+[Gemini Robotics-ER](https://deepmind.google/models/gemini-robotics/) ·
+[RunPod](https://www.runpod.io/)
 
-make download-g1
-make build
-make gemini-sort-demo
-```
+---
 
-To change the instruction:
-
-```bash
-make gemini-sort-demo \
-  SORT_INSTRUCTION="Put all blue objects in the blue bucket, then sort the red objects."
-```
-
-The action loop writes `gemini_action_plan.json`, `execution_trace.json`, every
-camera observation, `result.json`, logs, and `rollout.mp4` under `outputs/`.
-
-Relevant upstream documentation:
-
-- [Gemini Robotics-ER 1.6](https://ai.google.dev/gemini-api/docs/robotics-overview)
-- [Official Unitree robot models](https://github.com/unitreerobotics/unitree_model)
-
-The asset checkout is ignored because it contains Git LFS binaries. Its verified
-upstream commit and relative asset path are recorded in
-`isaac_ext/pathvla_unitree/assets/unitree_g1.lock.json`.
-
-## What This Is
-
-This project runs a real Isaac Sim or Isaac Lab scene on a Linux NVIDIA GPU VM such as Brev, calls a real configured VLA endpoint to turn natural-language instructions into structured subgoals, plans waypoints in the live Isaac world, executes movement in simulation, and exposes API/dashboard surfaces for launch, live viewing, and replay.
-
-Target example:
-
-```text
-Go to the red bin, avoid the chair, inspect the table, then return home.
-```
-
-## What This Is Not
-
-- Not a toy local simulator
-- Not a 2D fallback simulator
-- Not a fake local Mac mode
-- Not silent substitution when assets or endpoints are missing
-- Not full humanoid locomotion training
-- Not real robot control
-- Not mocked VLA by default
-
-## Strict Runtime Behavior
-
-The default path is intentionally strict.
-
-- Missing `VLA_ENDPOINT` fails
-- Missing Unitree G1 USD asset fails
-- Missing locomotion policy/controller fails
-- Missing Isaac Sim / Isaac Lab fails
-- Missing livestream support fails if `--live webrtc` is requested
-
-Explicit fallback flags are required for development-only paths:
-
-- `--allow-proxy`
-- `--allow-kinematic-control`
-- `--allow-rule-planner`
-
-When used, these are printed and logged as non-primary development behavior.
-
-## Repository Layout
-
-```text
-pathvla-unitree-isaac-live/
-├── README.md
-├── Makefile
-├── .env.example
-├── requirements-dev.txt
-├── docker/
-├── config/
-├── pathvla/
-├── isaac_ext/
-├── apps/
-├── scripts/
-├── eval/
-├── outputs/
-└── tests/
-```
-
-## Prerequisites
-
-- Ubuntu Linux VM with NVIDIA GPU
-- `nvidia-smi` working
-- Docker with NVIDIA container runtime
-- Isaac Sim or Isaac Lab available via a compatible official base image or existing install
-- Mac used only as remote client over SSH, browser, or Isaac livestream client
-
-## Required Environment Variables
-
-- `ISAAC_BASE_IMAGE`
-- `VLA_ENDPOINT`
-- `VLA_API_KEY` optional
-- `VLA_MODEL_NAME` optional
-- `OPENAI_API_KEY` for the bundled real VLA server
-- `OPENAI_MODEL` optional, defaults in `.env.example`
-- `UNITREE_G1_USD_PATH`
-- `HOST_WORKSPACE_ROOT`
-- `BREV_PUBLIC_HOST`
-- `LIVESTREAM_PORTS`
-
-Optional:
-
-- `PATHVLA_OUTPUT_ROOT`
-- `PATHVLA_API_HOST`
-- `PATHVLA_API_PORT`
-- `PATHVLA_DASHBOARD_PORT`
-
-See [.env.example](./.env.example).
-
-## Brev Setup
-
-1. Create a Brev or equivalent Ubuntu GPU VM with NVIDIA drivers installed.
-2. SSH from Mac into the VM.
-3. Clone this repository.
-4. Set environment variables.
-5. Build the Isaac container.
-6. Run the validation checks.
-
-Commands:
-
-```bash
-bash scripts/setup_brev.sh
-make check-gpu
-make check-isaac
-make check-livestream
-make build
-make live-demo
-```
-
-## Isaac Container Setup
-
-This repo does not hardcode an Isaac image tag because NVIDIA image tags and access patterns change over time.
-
-Set:
-
-```bash
-export ISAAC_BASE_IMAGE="<official-compatible-isaac-lab-or-isaac-sim-image>"
-```
-
-Examples depend on your NVIDIA entitlement and installation path. The Dockerfile uses:
-
-```dockerfile
-ARG ISAAC_BASE_IMAGE
-FROM ${ISAAC_BASE_IMAGE}
-```
-
-You must supply a real Isaac-compatible base image.
-
-## Live Viewing From Mac
-
-### WebRTC / Isaac Livestream
-
-Use:
-
-```bash
-make check-livestream
-make live-demo
-```
-
-The system prints exact connection instructions including `BREV_PUBLIC_HOST` and the configured ports from [config/livestream.yaml](./config/livestream.yaml).
-
-Open or forward the required ports on the VM. Then connect from the Mac using the Isaac WebRTC streaming client or the supported browser/client path documented by your Isaac build.
-
-### Remote Desktop Alternative
-
-Use `--live remote_desktop` and provision NICE DCV, VNC, or RDP separately. This path is documented, but it is not used as a silent fallback for broken livestream mode.
-
-### Recorded Replay
-
-Use:
-
-```bash
-make recorded-demo
-```
-
-This runs headless and records logs plus video when capture support is available.
-
-## Main Strict Run On Brev
-
-```bash
-export VLA_ENDPOINT="https://your-vla-server/infer"
-export HOST_WORKSPACE_ROOT="/home/shadeform/workspace"
-export UNITREE_G1_USD_PATH="/host_workspace/unitree_assets/unitree_model/G1/29dof/usd/g1_29dof_rev_1_0/g1_29dof_rev_1_0.usd"
-export BREV_PUBLIC_HOST="<your-brev-host>"
-export ISAAC_BASE_IMAGE="<official-compatible-isaac-lab-or-isaac-sim-image>"
-
-make setup-brev
-make check-gpu
-make check-isaac
-make check-livestream
-make build
-make live-demo
-```
-
-Expected outcome:
-
-- Starts Isaac Sim or Isaac Lab
-- Builds the selected room or warehouse scene
-- Loads Unitree G1 asset
-- Calls the real VLA endpoint
-- Validates returned JSON
-- Plans waypoints using live semantic scene state
-- Executes movement in the Isaac simulation
-- Exposes livestream for Mac viewing
-- Records outputs under `outputs/`
-
-## Development-Only Fallback Run
-
-This remains a real Isaac Sim or Isaac Lab run, but it is not the primary claim.
-
-```bash
-make live-demo ALLOW_PROXY=1 ALLOW_KINEMATIC=1 ALLOW_RULE_PLANNER=1
-```
-
-This prints that:
-
-- a proxy robot is being used instead of a real Unitree G1 asset
-- kinematic control is being used instead of realistic locomotion
-- rule planner mode is enabled instead of VLA mode
-
-## API And Dashboard
-
-Start the API:
-
-```bash
-make api
-```
-
-Start the Streamlit dashboard:
-
-```bash
-make dashboard
-```
-
-The dashboard controls real Isaac runs. It does not emulate simulation in the browser.
-
-## Real VLA Server
-
-This repo now includes a real HTTP VLA server at [apps/vla_server.py](./apps/vla_server.py).
-It supports either:
-
-- OpenAI cloud models
-- a same-host or in-network OpenAI-compatible server, such as a locally served Gemma 4 endpoint
-
-Two supported deployment modes:
-
-1. Docker Compose service on the same VM
-
-```bash
-docker compose -f docker/docker-compose.yaml up -d vla-server
-export VLA_ENDPOINT="http://vla-server:5555/infer"
-python scripts/test_vla_endpoint.py
-```
-
-2. Host process on the same VM
-
-```bash
-make vla
-export VLA_ENDPOINT="http://host.docker.internal:5555/infer"
-python scripts/test_vla_endpoint.py
-```
-
-Important:
-
-- `127.0.0.1` does not work from the Isaac container unless the VLA server is running inside that same container.
-- If the VLA server runs as a separate process on the same VM, use `host.docker.internal`.
-- If the VLA server runs as the bundled compose service, use `http://vla-server:5555/infer`.
-
-## Gemma 4 On The Same Host
-
-If your Gemma 4 server runs on the same VM and exposes an OpenAI-compatible API, configure:
-
-```bash
-export VLA_LLM_BASE_URL="http://host.docker.internal:8000/v1"
-export VLA_LLM_MODEL="gemma-4"
-export VLA_ENDPOINT="http://vla-server:5555/infer"
-```
-
-Then start the planner service:
-
-```bash
-docker compose -f docker/docker-compose.yaml up -d vla-server
-python scripts/test_vla_endpoint.py
-```
-
-In this setup:
-
-- Isaac container -> `vla-server`
-- bundled VLA server -> your same-host Gemma 4 server at `host.docker.internal`
-
-About GR00T:
-
-- GR00T can be part of a robotics stack, but it is not required for this repo's VLA planning endpoint.
-- In this project, the VLA server is the natural-language-to-subgoal planner. Humanoid locomotion is a separate controller problem.
-
-## Evaluation
-
-Run the evaluation suite in recorded headless mode:
-
-```bash
-make eval
-```
-
-## Tests
-
-Unit tests:
-
-```bash
-make test
-```
-
-Integration tests:
-
-```bash
-make integration-test
-```
-
-Integration tests require a configured Isaac environment and are marked with `pytest -m integration`.
-
-## Troubleshooting
-
-- `scripts/check_gpu.sh` fails: fix GPU driver or Docker NVIDIA runtime before anything else.
-- `scripts/check_isaac.sh` fails: fix Isaac base image or host Isaac Python environment.
-- `scripts/check_livestream.sh` fails: open the required ports and enable the supported Isaac streaming extensions.
-- G1 asset missing: set `UNITREE_G1_USD_PATH` or rerun with `--allow-proxy`.
-- No controller configured: provide a real controller config or rerun with `--allow-kinematic-control`.
-- VLA invalid response: inspect `outputs/<run_id>/bad_vla_response.json`.
-- VLA endpoint error or HTTP 500: strict mode fails loudly; only `--allow-rule-planner` enables a debug-only fallback planner.
+<p align="center">
+  <strong>Robot intelligence should be tested where success is visible and failure is measurable.</strong>
+</p>

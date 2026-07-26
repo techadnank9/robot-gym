@@ -41,6 +41,8 @@ EASY_GRASP_RADIUS_POLICY_M = 1.45
 POLICY_NEAR_OBJECT_RADIUS_M = 0.60
 EASY_RELEASE_RADIUS_M = 0.90
 EASY_RELEASE_DROP_HEIGHT_M = 0.38
+BASE_VELOCITY_LIMITS = (0.52, 0.26, 0.90)
+BASE_SLEW_PER_PACKET = (0.08, 0.06, 0.16)
 
 
 class SimToRealG1RaceArena(DualG1RaceArena):
@@ -56,12 +58,29 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         hardware_log: Path | None = None,
         viewer_key_callback: Callable[[int], None] | None = None,
         grasp_mode: Literal["easy", "mechanical"] = "easy",
+        locomotion_scale: float = 1.0,
+        profile_version: str = "5.0",
+        match_prefix: str = "demo5",
     ) -> None:
         if grasp_mode not in {"easy", "mechanical"}:
             raise ValueError("grasp_mode must be 'easy' or 'mechanical'")
+        if not math.isfinite(locomotion_scale) or locomotion_scale <= 0:
+            raise ValueError("locomotion_scale must be positive and finite")
         self.domain_seed = domain_seed
         self.hardware_log = hardware_log
         self.grasp_mode = grasp_mode
+        self.locomotion_scale = float(locomotion_scale)
+        self.profile_version = profile_version
+        self.velocity_limits = (
+            BASE_VELOCITY_LIMITS[0] * self.locomotion_scale,
+            BASE_VELOCITY_LIMITS[1] * self.locomotion_scale,
+            BASE_VELOCITY_LIMITS[2],
+        )
+        self.slew_per_packet = (
+            BASE_SLEW_PER_PACKET[0] * self.locomotion_scale,
+            BASE_SLEW_PER_PACKET[1] * self.locomotion_scale,
+            BASE_SLEW_PER_PACKET[2],
+        )
         self.rng = np.random.default_rng(domain_seed)
         try:
             import mujoco
@@ -77,7 +96,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         self.viewer_enabled = viewer
         self.realtime = realtime
         self.viewer = None
-        self.match_id = f"demo5-{uuid.uuid4().hex[:10]}"
+        self.match_id = f"{match_prefix}-{uuid.uuid4().hex[:10]}"
         self.phase = MatchPhase.LOBBY
         self.winner: str | None = None
         self.started_wall_s: float | None = None
@@ -112,7 +131,16 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 )
                 for name in RIGHT_ARM_JOINT_NAMES
             }
-        self.locomotion = DualUnitreeLocomotion(self.model, self.data, self.mujoco)
+        self.locomotion = DualUnitreeLocomotion(
+            self.model,
+            self.data,
+            self.mujoco,
+            command_limits=(
+                max(0.65, self.velocity_limits[0]),
+                max(0.35, self.velocity_limits[1]),
+                1.10,
+            ),
+        )
         self._initialize_actuators()
         mujoco.mj_forward(self.model, self.data)
         if viewer:
@@ -145,6 +173,8 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             dropout_probability=float(self.domain_parameters["packetDropProbability"]),
             joint_position_noise_rad=float(self.domain_parameters["jointPositionNoiseRad"]),
             joint_velocity_noise_rps=float(self.domain_parameters["jointVelocityNoiseRps"]),
+            velocity_limits=self.velocity_limits,
+            slew_per_packet=self.slew_per_packet,
         )
         self.perception = DelayedCameraPerception(
             self.model,
@@ -223,7 +253,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
 
     def state_payload(self) -> dict[str, Any]:
         payload = super().state_payload()
-        payload["profileVersion"] = "5.0"
+        payload["profileVersion"] = self.profile_version
         payload["matchMode"] = match_mode(
             tuple(runtime.config for runtime in self.players.values())
         ).value
@@ -245,6 +275,15 @@ class SimToRealG1RaceArena(DualG1RaceArena):
             ),
             "graspAssistForceN": 0.0,
             "domainSeed": self.domain_seed,
+            "locomotionProfile": {
+                "directionalSpeedScale": self.locomotion_scale,
+                "velocityLimits": {
+                    "forwardMps": self.velocity_limits[0],
+                    "lateralMps": self.velocity_limits[1],
+                    "yawRateRps": self.velocity_limits[2],
+                },
+                "simulationOnly": self.locomotion_scale > 1.0,
+            },
             "perception": self.perception.report() if hasattr(self, "perception") else {},
             "sdkChannels": self.locomotion.report() if hasattr(self.locomotion, "report") else {},
             "graspAttempts": dict(self._grasp_attempts),
@@ -318,7 +357,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         super().write_evidence(directory)
         perception_errors = self._perception_errors()
         report = {
-            "profileVersion": "5.0",
+            "profileVersion": self.profile_version,
             "matchId": self.match_id,
             "claims": {
                 "controllerUsesGroundTruthObjectPose": self.grasp_mode == "easy",
@@ -330,6 +369,7 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 "cameraAndJointNoiseModeled": True,
                 "domainRandomizationEnabled": True,
                 "missRecoveryEnabled": True,
+                "directionalSpeedScale": self.locomotion_scale,
             },
             "domainParameters": self.domain_parameters,
             "perception": {
@@ -399,9 +439,9 @@ class SimToRealG1RaceArena(DualG1RaceArena):
                 if frame.deadman:
                     self.locomotion.set_command(
                         player_id,
-                        0.52 * frame.move_y,
-                        0.26 * frame.move_x,
-                        0.90 * frame.yaw,
+                        self.velocity_limits[0] * frame.move_y,
+                        self.velocity_limits[1] * frame.move_x,
+                        self.velocity_limits[2] * frame.yaw,
                     )
                 else:
                     self.locomotion.set_command(player_id, 0.0, 0.0, 0.0)
@@ -442,8 +482,15 @@ class SimToRealG1RaceArena(DualG1RaceArena):
         yaw = self._base_yaw(player_id) + float(self.rng.normal(0.0, 0.008))
         desired = math.atan2(float(delta[1]), float(delta[0]))
         error = _wrap_angle(desired - yaw)
-        forward = min(0.40, max(0.0, distance - 0.10)) * max(0.0, math.cos(error))
-        lateral = float(np.clip(math.sin(error) * min(distance, 0.6), -0.20, 0.20))
+        forward = (
+            min(0.40, max(0.0, distance - 0.10))
+            * max(0.0, math.cos(error))
+            * self.locomotion_scale
+        )
+        lateral = float(
+            np.clip(math.sin(error) * min(distance, 0.6), -0.20, 0.20)
+            * self.locomotion_scale
+        )
         self.locomotion.set_command(
             player_id,
             forward,

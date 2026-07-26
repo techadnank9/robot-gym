@@ -2,9 +2,11 @@ const qs = new URLSearchParams(location.search);
 const requestedPlayer = ["p1", "p2"].includes(qs.get("player"))
   ? qs.get("player")
   : null;
-const demo5Host = location.port === "8085" ||
+const demo6Host = location.port === "8086" ||
+  /-8086\.proxy\.runpod\.net$/.test(location.hostname);
+const demo5Host = demo6Host || location.port === "8085" ||
   /-8085\.proxy\.runpod\.net$/.test(location.hostname);
-const socketPort = qs.get("wsPort") || (demo5Host ? "8765" : "8763");
+const socketPort = qs.get("wsPort") || (demo6Host ? "8766" : (demo5Host ? "8765" : "8763"));
 let socketHost = qs.get("wsHost") || location.hostname || "127.0.0.1";
 const scheme = location.protocol === "https:" ? "wss" : "ws";
 const runpodProxy = !qs.has("wsHost") &&

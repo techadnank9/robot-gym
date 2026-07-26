@@ -12,6 +12,7 @@ MUJOCO_LOG.TXT
 
 outputs/*
 !outputs/.gitkeep
+docs/investor/rendered/
 
 # Reproducibly downloaded by setup scripts.
 assets/mujoco_menagerie/

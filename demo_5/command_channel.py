@@ -32,6 +32,8 @@ class SDKCompatibleCommandChannel:
         dropout_probability: float = 0.02,
         watchdog_s: float = 0.12,
         transport: Any | None = None,
+        velocity_limits: tuple[float, float, float] = (0.52, 0.26, 0.90),
+        slew_per_packet: tuple[float, float, float] = (0.08, 0.06, 0.16),
     ) -> None:
         self.player_id = player_id
         self.rng = rng
@@ -41,8 +43,11 @@ class SDKCompatibleCommandChannel:
         self.watchdog_s = watchdog_s
         self.transport = transport or DryRunTransport()
         self.transport.initialize()
-        self.limits = np.asarray([0.52, 0.26, 0.90], dtype=np.float32)
-        self.slew_per_packet = np.asarray([0.08, 0.06, 0.16], dtype=np.float32)
+        self.limits = _positive_vector("velocity_limits", velocity_limits)
+        self.slew_per_packet = _positive_vector(
+            "slew_per_packet",
+            slew_per_packet,
+        )
         self.desired = np.zeros(3, dtype=np.float32)
         self.active = np.zeros(3, dtype=np.float32)
         self._last_sample = np.zeros(3, dtype=np.float32)
@@ -96,6 +101,8 @@ class SDKCompatibleCommandChannel:
             "dropoutProbability": self.dropout_probability,
             "watchdogMs": round(1000.0 * self.watchdog_s, 1),
             "transportBackend": self.transport.backend_name,
+            "velocityLimits": self.limits.tolist(),
+            "slewPerPacket": self.slew_per_packet.tolist(),
             "activeCommand": self.active.tolist(),
         }
 
@@ -150,6 +157,8 @@ class ConstrainedLocomotion:
         dropout_probability: float,
         joint_position_noise_rad: float,
         joint_velocity_noise_rps: float,
+        velocity_limits: tuple[float, float, float] = (0.52, 0.26, 0.90),
+        slew_per_packet: tuple[float, float, float] = (0.08, 0.06, 0.16),
     ) -> None:
         self.base = base
         self.model = model
@@ -163,6 +172,8 @@ class ConstrainedLocomotion:
                 player_id,
                 rng,
                 dropout_probability=dropout_probability,
+                velocity_limits=velocity_limits,
+                slew_per_packet=slew_per_packet,
             )
             for player_id in ("p1", "p2")
         }
@@ -211,3 +222,10 @@ class ConstrainedLocomotion:
             }
             for player_id, channel in self.channels.items()
         }
+
+
+def _positive_vector(name: str, values: tuple[float, float, float]) -> np.ndarray:
+    vector = np.asarray(values, dtype=np.float32)
+    if vector.shape != (3,) or not np.all(np.isfinite(vector)) or np.any(vector <= 0):
+        raise ValueError(f"{name} must contain three positive finite values")
+    return vector

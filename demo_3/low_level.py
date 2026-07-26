@@ -23,10 +23,24 @@ class PlayerPolicyState:
 class DualUnitreeLocomotion:
     """Runs one pinned official Unitree policy instance for each shared-world G1."""
 
-    def __init__(self, model: Any, data: Any, mujoco_module: Any) -> None:
+    def __init__(
+        self,
+        model: Any,
+        data: Any,
+        mujoco_module: Any,
+        *,
+        command_limits: tuple[float, float, float] = (0.65, 0.35, 1.10),
+    ) -> None:
         self.model = model
         self.data = data
         self.mujoco = mujoco_module
+        self.command_limits = np.asarray(command_limits, dtype=np.float32)
+        if (
+            self.command_limits.shape != (3,)
+            or not np.all(np.isfinite(self.command_limits))
+            or np.any(self.command_limits <= 0)
+        ):
+            raise ValueError("command_limits must contain three positive finite values")
         root = project_root() / "demo_2" / "vendor" / "unitree_rl_gym"
         config_path = root / "deploy" / "deploy_mujoco" / "configs" / "g1.yaml"
         policy_path = root / "deploy" / "pre_train" / "g1" / "motion.pt"
@@ -79,9 +93,7 @@ class DualUnitreeLocomotion:
         command = np.asarray([vx, vy, yaw_rate], dtype=np.float32)
         if not np.all(np.isfinite(command)):
             raise ValueError("locomotion command must be finite")
-        command[0] = np.clip(command[0], -0.65, 0.65)
-        command[1] = np.clip(command[1], -0.35, 0.35)
-        command[2] = np.clip(command[2], -1.1, 1.1)
+        command = np.clip(command, -self.command_limits, self.command_limits)
         self.commands[player_id] = command
 
     def apply_torques(self) -> None:

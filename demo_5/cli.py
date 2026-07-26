@@ -110,9 +110,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def run(args: argparse.Namespace) -> dict[str, Any]:
+def run(
+    args: argparse.Namespace,
+    *,
+    demo_label: str = "Demo 5",
+    profile_version: str = "5.0",
+    locomotion_scale: float = 1.0,
+    match_prefix: str = "demo5",
+    output_prefix: str = "demo_5_sim_to_real",
+) -> dict[str, Any]:
     if sys.platform != "darwin" and not args.headless:
-        raise RuntimeError("Visible Demo 5 currently requires macOS and mjpython")
+        raise RuntimeError(f"Visible {demo_label} currently requires macOS and mjpython")
     if args.hardware_log is not None and not args.hardware_log.is_file():
         raise FileNotFoundError(f"Hardware telemetry log not found: {args.hardware_log}")
     player_configs = (
@@ -149,7 +157,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     native_keyboard = (
         MujocoKeyboard(native_player_ids[0]) if native_player_ids else None
     )
-    output_dir = args.output_dir or _default_output_dir()
+    output_dir = args.output_dir or _default_output_dir(output_prefix)
     arena = SimToRealG1RaceArena(
         player_configs,
         viewer=not args.headless,
@@ -160,6 +168,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             native_keyboard.on_key if native_keyboard is not None else None
         ),
         grasp_mode=args.grasp_mode,
+        locomotion_scale=locomotion_scale,
+        profile_version=profile_version,
+        match_prefix=match_prefix,
     )
     live: Demo5VLGEWorldAdapter | None = None
     gamepads: dict[str, MacGamepad] = {}
@@ -173,7 +184,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             arena.step(1000)
             report = {
                 "status": "ok",
-                "profileVersion": "5.0",
+                "profileVersion": profile_version,
                 "model": {
                     "nq": arena.model.nq,
                     "nv": arena.model.nv,
@@ -195,7 +206,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 websocket_port=args.websocket_port,
             )
             live.start()
-            print(f"VLGE-embeddable Demo 5 view: {live.url}")
+            print(f"VLGE-embeddable {demo_label} view: {live.url}")
             if pod_id := os.getenv("RUNPOD_POD_ID"):
                 print(
                     "RunPod public view: "
@@ -253,7 +264,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
         print(f"Match mode: {match_mode(player_configs).value}")
         print(
-            f"Demo 5 grasp: {args.grasp_mode}"
+            f"{demo_label} grasp: {args.grasp_mode}"
             + (
                 " (assisted snap-to-hand; not sim-to-real grasp evidence)"
                 if args.grasp_mode == "easy"
@@ -261,12 +272,18 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             )
         )
         print(
-            "Demo 5 constraints: camera estimates, 50 Hz SDK channel, "
+            f"{demo_label} constraints: camera estimates, 50 Hz SDK channel, "
             "latency/dropout/noise/randomization"
         )
         print(
-            "Demo 5 environment: Template_73_Export V-BLDR room "
+            f"{demo_label} environment: Template_73_Export V-BLDR room "
             "(15 material-aware, visual-only mesh layers)"
+        )
+        print(
+            f"{demo_label} locomotion: {locomotion_scale:.1f}x directional profile "
+            f"({arena.velocity_limits[0]:.2f} m/s forward, "
+            f"{arena.velocity_limits[1]:.2f} m/s lateral, "
+            f"{arena.velocity_limits[2]:.2f} rad/s yaw)"
         )
         print(f"Live render profile: {args.render_profile}")
         if native_keyboard is not None:
@@ -326,7 +343,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "status": arena.phase.value,
             "winner": arena.winner,
             "matchMode": match_mode(player_configs).value,
-            "profileVersion": "5.0",
+            "profileVersion": profile_version,
             "state": arena.state_payload(),
         }
         if live is not None:
@@ -567,9 +584,9 @@ def _render_live_frames(
     }
 
 
-def _default_output_dir() -> Path:
+def _default_output_dir(prefix: str = "demo_5_sim_to_real") -> Path:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    return Path("outputs") / f"demo_5_sim_to_real_{stamp}"
+    return Path("outputs") / f"{prefix}_{stamp}"
 
 
 def main() -> None:

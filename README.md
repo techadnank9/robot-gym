@@ -184,6 +184,24 @@ scripts/run_g1_demo_5.sh scripted
 
 See `demo_5/README.md` for keyboard/model matches and hardware replay format.
 
+## Demo 6: 3× directional-speed race
+
+Demo 6 keeps the complete Demo 5 arena and control stack but triples
+forward/backward and left/right command speed for both human and AI players.
+Yaw stays unchanged for controllability. Demo 5 remains at its original speed.
+
+For an idle P1 versus a locally connected P2 gamepad:
+
+```bash
+scripts/run_g1_demo_6.sh match \
+  --p1 human --p1-input idle \
+  --p2 human --p2-input gamepad --p2-gamepad 0
+```
+
+The Demo 6 ceilings are 1.56 m/s forward/backward and 0.78 m/s lateral.
+This is an arcade simulation profile, not a claim that a real G1 can safely
+run the same out-of-distribution commands. See `demo_6/README.md`.
+
 ## Georeferenced San Francisco MuJoCo Scene
 
 The native MuJoCo path can generate a local San Francisco scene from live

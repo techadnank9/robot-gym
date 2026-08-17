@@ -10,7 +10,7 @@ ALLOW_RULE_PLANNER ?= 0
 
 export PYTHONPATH
 
-.PHONY: setup-brev runpod-setup runpod-lobby runpod-play runpod-validate mac-setup mac-smoke mac-demo demo-3 demo-3-scripted demo-3-validate mac-osm-build mac-osm mac-golden-gate-build mac-golden-gate mac-salesforce-park-build mac-salesforce-park replit-worker replit-test check-gpu check-isaac check-livestream download-g1 download-g1-mjcf gemini-sort-demo build live-demo recorded-demo api vla dashboard eval test integration-test clean
+.PHONY: setup-brev runpod-setup runpod-lobby runpod-play runpod-validate mac-setup mac-smoke mac-demo demo-3 demo-3-scripted demo-3-validate mac-osm-build mac-osm mac-golden-gate-build mac-golden-gate mac-salesforce-park-build mac-salesforce-park mac-library-convert mac-library-build mac-library replit-worker replit-test check-gpu check-isaac check-livestream download-g1 download-g1-mjcf gemini-sort-demo build live-demo recorded-demo api vla dashboard eval test integration-test clean
 
 runpod-setup:
 	bash scripts/setup_runpod.sh
@@ -54,6 +54,15 @@ mac-osm:
 mac-golden-gate-build: mac-osm-build
 
 mac-golden-gate: mac-osm
+
+mac-library-convert:
+	blender --background --factory-startup --python scripts/convert_library_scan.py -- --input "$(SCAN_GLB)" --output-dir assets/library_scan
+
+mac-library-build:
+	.venv-mac/bin/python -m pathvla.library_mujoco --build-only
+
+mac-library:
+	bash scripts/run_library_scan.sh
 
 mac-salesforce-park-build:
 	.venv-mac/bin/python -m pathvla.osm_mujoco --config config/osm_sf_salesforce_park.yaml --output-dir outputs/mujoco_sf_salesforce_park --build-only

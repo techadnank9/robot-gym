@@ -271,6 +271,63 @@ scripts/run_g1_demo_6.sh validate
 python3 -m pytest tests -m "not integration"
 ```
 
+## Real room scans
+
+Any photogrammetry scan of a real space (Polycam, RoomPlan, or another
+capture app) can be loaded as a MuJoCo world with a G1 standing in it. The
+pipeline is two steps: convert the mesh once, then launch.
+
+```bash
+# 1. Convert a GLB into MuJoCo-ready OBJ parts, PNG textures and a manifest.
+make mac-library-convert SCAN_GLB=~/Downloads/my_room.glb
+
+# 2. Launch the interactive viewer.
+make mac-library
+```
+
+Rendering works without a display, which is useful over SSH or on a headless
+host:
+
+```bash
+.venv-mac/bin/python -m pathvla.library_mujoco --screenshot outputs/room.png
+.venv-mac/bin/python -m pathvla.library_mujoco --video outputs/room.mp4 --seconds 15
+```
+
+### How the conversion works
+
+`scripts/convert_library_scan.py` runs under Blender and handles the three
+things that otherwise make a raw scan unusable in MuJoCo:
+
+- **One texture per mesh.** The scan is split by material so each exported OBJ
+  carries exactly one texture, matching MuJoCo's one-material-per-geom model.
+- **Floor detection.** A scan's minimum z is noise (stray points below the
+  floor), so the floor plane is found by area-weighting upward-facing triangles
+  into z bins and taking the lowest dominant cluster. The mesh is then
+  translated so the floor sits at `z = 0` and the room is centred on the
+  origin, which is what puts the robot inside the room rather than beside it.
+- **A manifest.** `manifest.json` records bounds, the detected floor height,
+  the applied offset, and per-part texture and triangle counts.
+
+### How the scene is assembled
+
+`pathvla/library_mujoco.py` builds the MJCF the same way `pathvla/osm_mujoco.py`
+does: parse the G1 model, point `meshdir` at its assets, then add scan geometry
+and collision proxies.
+
+The important constraint is that **MuJoCo collides mesh geoms as their convex
+hull**. A room mesh hulled is a solid block that entombs the robot, so the scan
+is attached as visual-only geometry (`contype=0 conaffinity=0`, group 2) and
+collision comes from a floor plane plus four wall boxes fitted to the scan
+bounds. Pass `--no-walls` to drop the walls, or `--spawn X Y Z` to move the
+robot's start pose.
+
+### Viewer note
+
+Use `mujoco.viewer.launch_passive`, not `mujoco.viewer.launch`. On macOS with
+Python 3.14 and MuJoCo 3.11 the blocking `launch()` path throws inside the
+`Simulate` constructor even under `mjpython` with the main-thread hook
+correctly installed. Every viewer in this repository uses the passive path.
+
 ## Bring your own model
 
 Robot Gym exposes a small policy decision surface rather than coupling the
@@ -317,7 +374,7 @@ demo_3/        competitive dual-G1 arena, policies, browser client
 demo_5/        perception, constrained command channel, evidence, hosted lobby
 demo_6/        optional 3× planar-speed gameplay profile
 demo_2/        SDK2 transport and real-G1 boundary experiments
-pathvla/       VLA, MuJoCo sorting, OSM world generation, remote worker
+pathvla/       VLA, MuJoCo sorting, OSM and room-scan world generation, remote worker
 isaac_ext/     Isaac Lab / Isaac Sim extension
 scripts/       setup, launch, conversion, validation, and deployment tools
 tests/         arena, policy, controls, recovery, deployment, and evidence tests

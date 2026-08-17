@@ -21,3 +21,7 @@ isaac_ext/pathvla_unitree/assets/unitree_model/
 
 # Local source/export files are not needed by the runtime.
 *.fbx
+
+# Converted room scans are large and often capture private spaces and people.
+# Regenerate locally with 'make mac-library-convert SCAN_GLB=<file>.glb'.
+assets/library_scan/

@@ -1,0 +1,11 @@
+[project]
+name = "g1-antioch-sim"
+version = "0.1.0"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "antioch-sim[isaac-sim]>=0.3.63",
+    "google-genai>=2.18.1",
+]
+
+[tool.uv]
+compile-bytecode = true

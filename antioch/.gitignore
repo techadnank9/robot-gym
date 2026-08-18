@@ -1,0 +1,23 @@
+# Local Antioch state and environment caches
+.antioch/
+.venv/
+.uv-cache/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+
+# Local scan sources and conversion output; the room ships as the
+# `library-real` asset, so machines never need these files synced.
+assets/
+
+# API keys. Never commit these — the Gemini key lives here and is read at
+# runtime by src/gemini_er.py.
+secrets/
+*.key
+.DS_Store
+
+# Upstream Unitree policy weights. Not redistributed here: the repo already
+# fetches them hash-verified via scripts/setup_demo_2_sil.sh. Populate with
+#   cp demo_2/vendor/unitree_rl_gym/deploy/pre_train/g1/motion.pt \
+#      antioch/policies/g1_motion.pt
+policies/g1_motion.pt
